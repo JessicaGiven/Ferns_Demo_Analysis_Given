@@ -29,6 +29,8 @@ using namespace std;
 #include "planar_pattern_detector.h"
 #include "affine_transformation_range.h"
 
+
+//¶şÎ¬ÌØÕ÷¼ì²âÆ÷Àà
 class planar_pattern_detector_builder
 {
  public:

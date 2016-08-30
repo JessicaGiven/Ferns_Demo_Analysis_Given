@@ -34,17 +34,32 @@ using namespace std;
 #include "template_matching_based_tracker.h"
 
 const int max_filename = 1000;
+/*
 
+枚举三个输入源：
+摄像头、图片序列设备、视频文件
+
+*/
 enum source_type {webcam_source, sequence_source, video_source};
 
+//定义一个新的二维特征检测器类
 planar_pattern_detector * detector;
+//定义一个新的模板匹配跟踪器
 template_matching_based_tracker * tracker;
 
 int mode = 2;
 bool show_tracked_locations = true;
 bool show_keypoints = true;
-
+//初始化文字表示结构
 CvFont font;
+
+/*
+
+draw_quadrangle函数
+
+
+
+*/
 
 void draw_quadrangle(IplImage * frame,
 		     int u0, int v0,
@@ -195,19 +210,21 @@ void help(const string& exec_name) {
   cout << "   -h : This help message." << endl;
 }
 
+//主函数
 int main(int argc, char ** argv)
 {
-  string model_image     = "model.bmp";
-  string sequence_format = "";
-  string video_file = "";
-  source_type frame_source = webcam_source;
+  string model_image     = "model.bmp";	//定义模型图片文件名
+  string sequence_format = "";	//序列格式
+  string video_file = "";	//视频文件名
+  source_type frame_source = webcam_source;	//默认输入模式：摄像头模式
 
+  //接受键盘输入的命令，根据命令索引help
   for(int i = 0; i < argc; ++i) {
     if(strcmp(argv[i], "-h") == 0) {
       help(argv[0]);
       return 0;
     }
-
+	//读取模型文件名
     if(strcmp(argv[i], "-m") == 0) {
       if(i == argc - 1) {
         cerr << "Missing model name after -m\n";
@@ -216,7 +233,7 @@ int main(int argc, char ** argv)
       }
       ++i;
       model_image = argv[i];
-    }
+    }//读取图片序列文件名
     else if(strcmp(argv[i], "-s") == 0) {
       if(i == argc - 1) {
         cerr << "Missing sequence format after -s\n";
@@ -226,7 +243,7 @@ int main(int argc, char ** argv)
       ++i;
       sequence_format = argv[i];
       frame_source = sequence_source;
-    }
+    }//读取视频文件名
     else if(strcmp(argv[i], "-v") == 0) {
       if(i == argc - 1) {
         cerr << "Missing  video filename after -v\n";
@@ -239,8 +256,10 @@ int main(int argc, char ** argv)
     }
   }
 
-  affine_transformation_range range;
+  //初始化仿射变换参数
+  affine_transformation_range range; 
 
+  //初始化二维特征检测器
   detector = planar_pattern_detector_builder::build_with_cache(model_image.c_str(),
 							       &range,
 							       400,
@@ -255,12 +274,13 @@ int main(int argc, char ** argv)
     return -1;
   }
 
+  //用检测器类中的方法设置最大检测点
   detector->set_maximum_number_of_points_to_detect(1000);
 
-  tracker = new template_matching_based_tracker();
-  string trackerfn = model_image + string(".tracker_data");
+  tracker = new template_matching_based_tracker(); //初始化模板匹配跟踪器
+  string trackerfn = model_image + string(".tracker_data");	//设置跟踪器文件名
   if (!tracker->load(trackerfn.c_str())) {
-    cout << "Training template matching..."<<endl;
+    cout << "Training template matching..."<<endl;	//读取跟踪器文件数据（模板数据？）
     tracker->learn(detector->model_image,
 		   5, // number of used matrices (coarse-to-fine)
 		   40, // max motion in pixel used to train to coarser matrix
@@ -269,30 +289,30 @@ int main(int argc, char ** argv)
 		   detector->u_corner[2], detector->v_corner[2],
 		   40, 40, // neighbordhood for local maxima selection
 		   10000 // number of training samples
-		   );
-    tracker->save(trackerfn.c_str());
+		   );	//训练跟踪器
+    tracker->save(trackerfn.c_str());	//存储跟踪器数据
   }
-  tracker->initialize();
-
+  tracker->initialize();	//跟踪器初始化
+  //初始化文字标识
   cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX,
 	     1.0, 1.0, 0.0,
 	     3, 8);
-
-  CvCapture * capture = 0;
+ 
+  CvCapture * capture = 0;	//定义视频捕捉结构体
   IplImage * frame, * gray_frame = 0;
   int frame_id = 1;
-  char seq_buffer[max_filename];
+  char seq_buffer[max_filename];	//定义图像序列存储空间
 
   cvNamedWindow("ferns-demo", 1 );
-
+  //从摄像头读取图像
   if(frame_source == webcam_source) {
     capture = cvCaptureFromCAM(0);
-  }
+  }//从视频文件读取图像
   else if(frame_source == video_source) {
     capture = cvCreateFileCapture(video_file.c_str());
   }
 
-
+  //初始化计时器
   int64 timer = cvGetTickCount();
 
   bool stop = false;

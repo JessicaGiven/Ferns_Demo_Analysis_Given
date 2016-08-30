@@ -26,6 +26,7 @@
 #include <fstream>
 using namespace std;
 
+//仿射变换参数类
 class affine_transformation_range
 {
  public:
