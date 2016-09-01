@@ -57,22 +57,30 @@ CvFont font;
 
 draw_quadrangle函数
 
-
+绘制四边形框
 
 */
 
-void draw_quadrangle(IplImage * frame,
-		     int u0, int v0,
+void draw_quadrangle(IplImage * frame,	//输入图像
+		     int u0, int v0,	
 		     int u1, int v1,
 		     int u2, int v2,
-		     int u3, int v3,
-		     CvScalar color, int thickness = 1)
+		     int u3, int v3,	//四边形四顶点坐标
+		     CvScalar color, int thickness = 1)	//color:四边形颜色；thinckness:四边形线段粗细
 {
   cvLine(frame, cvPoint(u0, v0), cvPoint(u1, v1), color, thickness);
   cvLine(frame, cvPoint(u1, v1), cvPoint(u2, v2), color, thickness);
   cvLine(frame, cvPoint(u2, v2), cvPoint(u3, v3), color, thickness);
   cvLine(frame, cvPoint(u3, v3), cvPoint(u0, v0), color, thickness);
 }
+
+/*
+
+draw_detected_position函数
+
+绘制检测位置的四边形框（白色）
+
+*/
 
 void draw_detected_position(IplImage * frame, planar_pattern_detector * detector)
 {
@@ -84,6 +92,14 @@ void draw_detected_position(IplImage * frame, planar_pattern_detector * detector
 		  cvScalar(255), 3);
 }
 
+/*
+
+draw_initial_rectangle函数
+
+初始化四边形框（灰色）
+
+*/
+
 void draw_initial_rectangle(IplImage * frame, template_matching_based_tracker * tracker)
 {
   draw_quadrangle(frame,
@@ -93,6 +109,14 @@ void draw_initial_rectangle(IplImage * frame, template_matching_based_tracker * 
 		  tracker->u0[6], tracker->u0[7],
 		  cvScalar(128), 3);
 }
+
+/*
+
+draw_tracked_position函数
+
+绘制跟踪位置的四边形框（白色）
+
+*/
 
 void draw_tracked_position(IplImage * frame, template_matching_based_tracker * tracker)
 {
@@ -104,6 +128,14 @@ void draw_tracked_position(IplImage * frame, template_matching_based_tracker * t
 		  cvScalar(255), 3);
 }
 
+/*
+
+draw_tracked_locations函数
+
+绘制跟踪位置的圆形框（白色）
+
+*/
+
 void draw_tracked_locations(IplImage * frame, template_matching_based_tracker * tracker)
 {
   for(int i = 0; i < tracker->nx * tracker->ny; i++) {
@@ -112,6 +144,14 @@ void draw_tracked_locations(IplImage * frame, template_matching_based_tracker * 
     cvCircle(frame, cvPoint(x1, y1), 3, cvScalar(255, 255, 255), 1);
   }
 }
+
+/*
+
+draw_detected_keypoints函数
+
+绘制特征点位置的圆形框（灰色）
+
+*/
 
 void draw_detected_keypoints(IplImage * frame, planar_pattern_detector * detector)
 {
@@ -122,6 +162,14 @@ void draw_detected_keypoints(IplImage * frame, planar_pattern_detector * detecto
 	     16 * (1 << int(detector->detected_points[i].scale)),
 	     cvScalar(100), 1);
 }
+
+/*
+
+draw_recognized_keypoints函数
+
+绘制潜在匹配特征点位置的圆形框（白色）（雾？）
+
+*/
 
 void draw_recognized_keypoints(IplImage * frame, planar_pattern_detector * detector)
 {
@@ -134,45 +182,58 @@ void draw_recognized_keypoints(IplImage * frame, planar_pattern_detector * detec
 	       cvScalar(255, 255, 255), 1);
 }
 
+/*
+
+detect_and_draw函数
+
+0: Detect when tracking fails or for initialization then track.
+1: Track only
+2: Detect only (DEFAULT)
+3: Detect + track in every frame
+
+The number  keys 4&5  can be  used to turn  on/off the  recognized and
+ detected keypoints, respectively.
+
+*/
 
 void detect_and_draw(IplImage * frame)
 {
-	static bool last_frame_ok=false;
+	static bool last_frame_ok=false;	//上一帧成功追踪标记
 
 	if (mode == 1 || ((mode==0) && last_frame_ok)) {
-		bool ok = tracker->track(frame);
+		bool ok = tracker->track(frame);	//对当前帧进行跟踪，返回跟踪是否成功标记
 		last_frame_ok=ok;
 
 
 		if (!ok) {
 			if (mode==0) return detect_and_draw(frame);
 			else {
-				draw_initial_rectangle(frame, tracker);
-				tracker->initialize();
+				draw_initial_rectangle(frame, tracker);	//初始化四边形框
+				tracker->initialize();	//初始化跟踪器
 			}
 		} else {
-			draw_tracked_position(frame, tracker);
+			draw_tracked_position(frame, tracker);	
 			if (show_tracked_locations) draw_tracked_locations(frame, tracker);
 		}
 		cvPutText(frame, "template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
 	} else {
-		detector->detect(frame);
-
+		detector->detect(frame);	//对当前帧进行检测
+		
 		if (detector->pattern_is_detected) {
-			last_frame_ok=true;
-
+			last_frame_ok=true;	//检测到特征就置位成功标记
+			//利用检测器的结果对跟踪器进行初始化
 			tracker->initialize(detector->detected_u_corner[0], detector->detected_v_corner[0],
 					detector->detected_u_corner[1], detector->detected_v_corner[1],
 					detector->detected_u_corner[2], detector->detected_v_corner[2],
 					detector->detected_u_corner[3], detector->detected_v_corner[3]);
 
 			if (mode == 3 && tracker->track(frame)) {
-
+				//绘制特征点位置
 				if (show_keypoints) {
 					draw_detected_keypoints(frame, detector);
 					draw_recognized_keypoints(frame, detector);
 				}
-				draw_tracked_position(frame, tracker);
+				draw_tracked_position(frame, tracker);	//绘制追踪位置
 				if (show_tracked_locations) draw_tracked_locations(frame, tracker);
 
 				cvPutText(frame, "detection+template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
@@ -319,31 +380,31 @@ int main(int argc, char ** argv)
   do {
     if(frame_source == webcam_source || frame_source == video_source) {
       if (cvGrabFrame(capture) == 0) break;
-      frame = cvRetrieveFrame(capture);
+      frame = cvRetrieveFrame(capture);	//抓取一帧图像
     }
     else {
-      snprintf(seq_buffer, max_filename, sequence_format.c_str(), frame_id);
-      frame = cvLoadImage(seq_buffer, 1);
+      snprintf(seq_buffer, max_filename, sequence_format.c_str(), frame_id);	//snprintf函数windows的标准输入输出库中没有，为Linux专用，从图像序列中读取一帧到缓冲区
+      frame = cvLoadImage(seq_buffer, 1);	//从缓冲区加载图像
       ++frame_id;
     }
 
     if (frame == 0) break;
 
     if (gray_frame == 0)
-      gray_frame = cvCreateImage(cvSize(frame->width,frame->height), IPL_DEPTH_8U, 1);
+      gray_frame = cvCreateImage(cvSize(frame->width,frame->height), IPL_DEPTH_8U, 1);	//初始化灰度空白图像
 
-    cvCvtColor(frame, gray_frame, CV_RGB2GRAY);
-
+    cvCvtColor(frame, gray_frame, CV_RGB2GRAY);	//将读取帧转为灰度图像
+	//判断图像原点位置，若图像原点不是左上，则翻转图像
     if (frame->origin != IPL_ORIGIN_TL)
       cvFlip(gray_frame, gray_frame, 0);
 
     detect_and_draw(gray_frame);
 
-    int64 now = cvGetTickCount();
-    double fps = 1e6 * cvGetTickFrequency()/double(now-timer);
+    int64 now = cvGetTickCount();	//取得计时结果
+    double fps = 1e6 * cvGetTickFrequency()/double(now-timer);	//计算处理帧率
     timer = now;
     clog << "Detection frame rate: " << fps << " fps         \r";
-
+	//选择工作模式
     int key = cvWaitKey(10);
     if (key >= 0) {
       switch(char(key)) {
@@ -358,7 +419,7 @@ int main(int argc, char ** argv)
       }
       cout << "mode=" << mode << endl;
     }
-
+	//如果输入源是图像序列的话，则释放当前帧
     if(frame_source == sequence_source) {
       cvReleaseImage(&frame);
     }
@@ -367,7 +428,7 @@ int main(int argc, char ** argv)
   clog << endl;
   delete detector;
   delete tracker;
-
+  //清除缓存
   cvReleaseImage(&gray_frame);
   cvReleaseCapture(&capture);
   cvDestroyWindow("ferns-demo");
