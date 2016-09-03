@@ -186,13 +186,15 @@ void draw_recognized_keypoints(IplImage * frame, planar_pattern_detector * detec
 
 detect_and_draw函数
 
-0: Detect when tracking fails or for initialization then track.
-1: Track only
-2: Detect only (DEFAULT)
-3: Detect + track in every frame
+0: Detect when tracking fails or for initialization then track.	当追踪失败时进行检测，或者初始化追踪
+1: Track only	//只追踪
+2: Detect only (DEFAULT)	//只检测（默认）
+3: Detect + track in every frame	//对每一帧进行都进行追踪和检测
 
 The number  keys 4&5  can be  used to turn  on/off the  recognized and
  detected keypoints, respectively.
+
+ 键入4，5可以分别控制是否识别和检测特征点
 
 */
 
@@ -206,16 +208,16 @@ void detect_and_draw(IplImage * frame)
 
 
 		if (!ok) {
-			if (mode==0) return detect_and_draw(frame);
+			if (mode==0) return detect_and_draw(frame);	//如果追踪失败，则重载该函数一次跳过跟踪阶段进入检测阶段
 			else {
 				draw_initial_rectangle(frame, tracker);	//初始化四边形框
 				tracker->initialize();	//初始化跟踪器
 			}
 		} else {
-			draw_tracked_position(frame, tracker);	
-			if (show_tracked_locations) draw_tracked_locations(frame, tracker);
+			draw_tracked_position(frame, tracker);	//绘制跟踪位置
+			if (show_tracked_locations) draw_tracked_locations(frame, tracker);	//绘制跟踪位置（变换）
 		}
-		cvPutText(frame, "template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
+		cvPutText(frame, "template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加template-based 3D tracking
 	} else {
 		detector->detect(frame);	//对当前帧进行检测
 		
@@ -234,31 +236,32 @@ void detect_and_draw(IplImage * frame)
 					draw_recognized_keypoints(frame, detector);
 				}
 				draw_tracked_position(frame, tracker);	//绘制追踪位置
-				if (show_tracked_locations) draw_tracked_locations(frame, tracker);
+				if (show_tracked_locations) draw_tracked_locations(frame, tracker);	//绘制追踪位置(变换）
 
-				cvPutText(frame, "detection+template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
-			} else {
+				cvPutText(frame, "detection+template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加detection+template-based 3D tracking
+			} else {//绘制特征点位置
 				if (show_keypoints) {
-					draw_detected_keypoints(frame, detector);
+					draw_detected_keypoints(frame, detector);	
 					draw_recognized_keypoints(frame, detector);
 				}
-				draw_detected_position(frame, detector);
-				cvPutText(frame, "detection", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
+				draw_detected_position(frame, detector);	//绘制检测位置
+				cvPutText(frame, "detection", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加template-based 3D tracking
 			}
 		} else {
 			last_frame_ok=false;
-			if (show_keypoints) draw_detected_keypoints(frame, detector);
+			if (show_keypoints) draw_detected_keypoints(frame, detector);	//绘制特征点位置
 
 			if (mode == 3)
-				cvPutText(frame, "detection + template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
+				cvPutText(frame, "detection + template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加detection + template-based 3D tracking
 			else
-				cvPutText(frame, "detection", cvPoint(10, 30), &font, cvScalar(255, 255, 255));
+				cvPutText(frame, "detection", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加detection
 		}
 	}
 
-	cvShowImage("ferns-demo", frame);
+	cvShowImage("ferns-demo", frame);	//显示标记之后的帧
 }
 
+//帮助输出内容
 void help(const string& exec_name) {
   cout << exec_name << " [-m <model image>] [-s <image sequence format>]\n\n";
   cout << "   -m : specify the name of the model image depicting the planar \n";
@@ -398,7 +401,7 @@ int main(int argc, char ** argv)
     if (frame->origin != IPL_ORIGIN_TL)
       cvFlip(gray_frame, gray_frame, 0);
 
-    detect_and_draw(gray_frame);
+    detect_and_draw(gray_frame);	//关键函数，检测跟踪并绘制结果函数
 
     int64 now = cvGetTickCount();	//取得计时结果
     double fps = 1e6 * cvGetTickFrequency()/double(now-timer);	//计算处理帧率
