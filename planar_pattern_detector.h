@@ -38,6 +38,7 @@ using namespace std;
 #include "affine_image_generator06.h"
 #include "fern_based_point_classifier.h"
 
+//¶şÎ¬ÌØÕ÷¼ì²âÆ÷Àà
 class planar_pattern_detector
 {
  public:

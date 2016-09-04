@@ -200,7 +200,7 @@ The number  keys 4&5  can be  used to turn  on/off the  recognized and
 
 void detect_and_draw(IplImage * frame)
 {
-	static bool last_frame_ok=false;	//上一帧成功追踪标记
+	static bool last_frame_ok=false;	//上一帧成功处理标记
 
 	if (mode == 1 || ((mode==0) && last_frame_ok)) {
 		bool ok = tracker->track(frame);	//对当前帧进行跟踪，返回跟踪是否成功标记
@@ -346,13 +346,13 @@ int main(int argc, char ** argv)
   if (!tracker->load(trackerfn.c_str())) {
     cout << "Training template matching..."<<endl;	//读取跟踪器文件数据（模板数据？）
     tracker->learn(detector->model_image,
-		   5, // number of used matrices (coarse-to-fine)
-		   40, // max motion in pixel used to train to coarser matrix
-		   20, 20, // defines a grid. Each cell will have one tracked point.
-		   detector->u_corner[0], detector->v_corner[1],
+		   5, // number of used matrices (coarse-to-fine)用到的矩阵（由粗到细）
+		   40, // max motion in pixel used to train to coarser matrix （训练粗矩阵的时候所用的最大动作数？）
+		   20, 20, // defines a grid. Each cell will have one tracked point.定义一个框架，每个单元里有一个跟踪点
+		   detector->u_corner[0], detector->v_corner[1], //检测器感兴趣区域（？？？）
 		   detector->u_corner[2], detector->v_corner[2],
-		   40, 40, // neighbordhood for local maxima selection
-		   10000 // number of training samples
+		   40, 40, // neighbordhood for local maxima selection 供选择的最大邻域
+		   10000 // number of training samples 训练样本数
 		   );	//训练跟踪器
     tracker->save(trackerfn.c_str());	//存储跟踪器数据
   }

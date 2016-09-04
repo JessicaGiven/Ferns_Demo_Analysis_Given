@@ -27,27 +27,30 @@
 #include "homography06.h"
 #include "homography_estimator.h"
 
+//模板匹配跟踪器类
 class template_matching_based_tracker
 {
  public:
   template_matching_based_tracker(void);
 
-  bool load(const char * filename);
-  void save(const char * filename);
-
-  void learn(IplImage * image,
-	     int number_of_levels, int max_motion, int nx, int ny,
+  bool load(const char * filename);	//跟踪器文件读取函数
+  void save(const char * filename);	//跟踪器文件存储函数
+  //跟踪器训练函数
+  void learn(IplImage * image,	//输入模板文件
+	     int number_of_levels, int max_motion, int nx, int ny,	//用到的矩阵（由粗到细），（训练粗矩阵的时候所用的最大动作数？），定义一个框架，每个单元里有一个跟踪点
 	     int xUL, int yUL,
-	     int xBR, int yBR,
-	     int bx, int by,
-	     int Ns);
+	     int xBR, int yBR,	//检测器感兴趣区域（？？？）
+	     int bx, int by,	//供选择的最大邻域
+	     int Ns);	//训练样本数
 
-  void initialize(void);
+  //初始化跟踪器函数
+  void initialize(void);	
+  //初始化跟踪器函数（带参数）
   void initialize(int u0, int v0,
 		  int u1, int v1,
 		  int u2, int v2,
 		  int u3, int v3);
-
+  //跟踪函数
   bool track(IplImage * input_frame);
 
   homography06 f;

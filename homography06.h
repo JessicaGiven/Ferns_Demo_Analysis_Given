@@ -28,6 +28,8 @@ using namespace std;
 
 #include <cv.h>
 
+
+//单应性类
 class homography06 : public CvMat
 {
  public:

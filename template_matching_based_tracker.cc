@@ -295,7 +295,7 @@ void template_matching_based_tracker::compute_As_matrices(IplImage * image, int 
   cvReleaseMat(&HHt_inv);
   cvReleaseMat(&Ht_HHt_inv);
 }
-
+//跟踪器训练函数
 void template_matching_based_tracker::learn(IplImage * image,
 					    int number_of_levels, int max_motion, int nx, int ny,
 					    int xUL, int yUL,
@@ -303,7 +303,7 @@ void template_matching_based_tracker::learn(IplImage * image,
 					    int bx, int by,
 					    int Ns)
 {
-  this->number_of_levels = number_of_levels;
+  this->number_of_levels = number_of_levels;	//类内部需要相互调用的时候用指针this
   this->nx = nx;
   this->ny = ny;
 

@@ -26,17 +26,18 @@ using namespace std;
 #include "mcv.h"
 #include "planar_pattern_detector_builder.h"
 
-planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(const char * image_name,
-									    affine_transformation_range * range,
-									    int maximum_number_of_points_on_model,
-									    int number_of_generated_images_to_find_stable_points,
-									    double minimum_number_of_views_rate,
-									    int patch_size, int yape_radius, int number_of_octaves,
-									    int number_of_ferns, int number_of_tests_per_fern,
-									    int number_of_samples_for_refinement, int number_of_samples_for_test,
-									    char * given_detector_data_filename,
-									    int roi_up_left_u, int roi_up_left_v,
-									    int roi_bottom_right_u, int roi_bottom_right_v)
+//检测器初始化函数
+planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(const char * image_name, //模型图片文件
+									    affine_transformation_range * range,	//仿射变换参数
+									    int maximum_number_of_points_on_model,	//模型中的最大点数
+									    int number_of_generated_images_to_find_stable_points,	//生成用于寻找稳定点的点数
+									    double minimum_number_of_views_rate,	//最小视频帧数（？）
+									    int patch_size, int yape_radius, int number_of_octaves, //（？？？）
+									    int number_of_ferns, int number_of_tests_per_fern, //蕨数量，每个蕨的测试数（？）
+									    int number_of_samples_for_refinement, int number_of_samples_for_test,	//用于简化的样本数，用于测试的样本数
+									    char * given_detector_data_filename,	//检测器文件名
+									    int roi_up_left_u, int roi_up_left_v,	//检测区域坐标
+									    int roi_bottom_right_u, int roi_bottom_right_v)	//检测区域坐标
 {
   planar_pattern_detector * detector = new planar_pattern_detector();
 
