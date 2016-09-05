@@ -158,33 +158,35 @@ void template_matching_based_tracker::add_noise(CvMat * V)
   }
 }
 
+//图像梯度计算函数
 IplImage * template_matching_based_tracker::compute_gradient(IplImage * image)
 {
   IplImage * dx = cvCreateImage(cvSize(image->width, image->height),
-				IPL_DEPTH_16S, 1);
+				IPL_DEPTH_16S, 1);	//初始化输入图像
   IplImage * dy = cvCreateImage(cvSize(image->width, image->height),
-				IPL_DEPTH_16S, 1);
+				IPL_DEPTH_16S, 1);	//初始化输入图像
   IplImage * result = cvCreateImage(cvSize(image->width, image->height),
-				    IPL_DEPTH_16S, 1);
-  cvSobel(image, dx, 1, 0, 3);
-  cvSobel(image, dy, 0, 1, 3);
-  cvMul(dx, dx, dx);
-  cvMul(dy, dy, dy);
-  cvAdd(dx, dy, result);
+				    IPL_DEPTH_16S, 1);	//初始化输出图像
+  cvSobel(image, dx, 1, 0, 3);	//用sobel算子计算图像x方向梯度
+  cvSobel(image, dy, 0, 1, 3);	//计算y方向梯度
+  cvMul(dx, dx, dx);	//G(x)^2
+  cvMul(dy, dy, dy);	//G(y)^2
+  cvAdd(dx, dy, result);	//G = (G(x)^2 + G(y)^2)^(1/2) (不开方？）
 
   cvReleaseImage(&dx);
-  cvReleaseImage(&dy);
+  cvReleaseImage(&dy);	//释放内存
 
   return result;
 }
 
+//计算极大值
 void template_matching_based_tracker::get_local_maximum(IplImage * G,
 							int xc, int yc, int w, int h,
 							int & xm, int & ym)
 {
   int max = -1;
   for(int v = yc - h / 2; v <= yc + h / 2; v++) {
-    short * row = mcvRow(G, v, short);
+    short * row = mcvRow(G, v, short);	//取图像一行（？）
     for(int u = xc - w / 2; u <= xc + w / 2; u++)
       if (row[u] > max) {
 	max = row[u];
@@ -196,9 +198,9 @@ void template_matching_based_tracker::get_local_maximum(IplImage * G,
 
 void template_matching_based_tracker::find_2d_points(IplImage * image, int bx, int by)
 {
-  IplImage * gradient = compute_gradient(image);
+  IplImage * gradient = compute_gradient(image);	//计算图像梯度
 
-  const float stepx = float(u0[2] - u0[0] - 2 * bx) / (nx - 1);
+  const float stepx = float(u0[2] - u0[0] - 2 * bx) / (nx - 1);	//与感兴趣区域长宽有关（？）
   const float stepy = float(u0[5] - u0[1] - 2 * by) / (ny - 1);
   for(int j = 0; j < ny; j++)
     for(int i = 0; i < nx; i++)
@@ -297,31 +299,31 @@ void template_matching_based_tracker::compute_As_matrices(IplImage * image, int 
 }
 //跟踪器训练函数
 void template_matching_based_tracker::learn(IplImage * image,
-					    int number_of_levels, int max_motion, int nx, int ny,
+					    int number_of_levels, int max_motion, int nx, int ny,	////用到的矩阵（由粗到细），（训练粗矩阵的时候所用的最大动作数？），定义一个框架，每个单元里有一个跟踪点
 					    int xUL, int yUL,
-					    int xBR, int yBR,
-					    int bx, int by,
-					    int Ns)
+					    int xBR, int yBR,	//检测器感兴趣区域（？？？）
+					    int bx, int by,	//供选择的最大邻域
+					    int Ns)	//训练样本数
 {
   this->number_of_levels = number_of_levels;	//类内部需要相互调用的时候用指针this
   this->nx = nx;
   this->ny = ny;
 
   m = new int[2 * nx * ny];
-  U0 = cvCreateMat(8, 1, CV_32F);
-  u0 = U0->data.fl;
+  U0 = cvCreateMat(8, 1, CV_32F);	//初始化一个矩阵，8*1
+  u0 = U0->data.fl;	//指针指向图像数据，以32bits浮点数为单位
   u0[0] = xUL; u0[1] = yUL;
   u0[2] = xBR; u0[3] = yUL;
   u0[4] = xBR; u0[5] = yBR;
-  u0[6] = xUL; u0[7] = yBR;
+  u0[6] = xUL; u0[7] = yBR;	//（？？？）
 
-  find_2d_points(image, bx, by);
+  find_2d_points(image, bx, by);	//（？？？）
 
-  U = cvCreateMat(8, 1, CV_32F);
-  u = U->data.fl;
+  U = cvCreateMat(8, 1, CV_32F);	//初始化一个矩阵，8*1
+  u = U->data.fl;	//指针指向图像数据，以32bits浮点数为单位
 
-  I0 = cvCreateMat(nx * ny, 1, CV_32F);
-  i0 = I0->data.fl;
+  I0 = cvCreateMat(nx * ny, 1, CV_32F);	//初始化一个矩阵，nx*ny
+  i0 = I0->data.fl;	//指针指向图像数据，以32bits浮点数为单位
 
   for(int i = 0; i < nx * ny; i++)
     i0[i] = mcvRow(image, m[2 * i + 1], unsigned char)[ m[2 * i] ];
