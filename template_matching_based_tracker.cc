@@ -179,37 +179,52 @@ IplImage * template_matching_based_tracker::compute_gradient(IplImage * image)
   return result;
 }
 
-//计算极大值
+/*极大值计算函数
+
+通过遍历的方法，计算邻域极大值
+
+*/
 void template_matching_based_tracker::get_local_maximum(IplImage * G,
 							int xc, int yc, int w, int h,
 							int & xm, int & ym)
 {
-  int max = -1;
-  for(int v = yc - h / 2; v <= yc + h / 2; v++) {
-    short * row = mcvRow(G, v, short);	//取图像一行（？）
-    for(int u = xc - w / 2; u <= xc + w / 2; u++)
+  int max = -1;	//初始化最大值缓存变量
+  for(int v = yc - h / 2; v <= yc + h / 2; v++) {//纵向遍历
+    short * row = mcvRow(G, v, short);	//取图像一行
+    for(int u = xc - w / 2; u <= xc + w / 2; u++)//横向遍历
       if (row[u] > max) {
 	max = row[u];
 	xm = u;
-	ym = v;
+	ym = v;	//记录最大值以其坐标
       }
   }
 }
 
+/*计算极大值点（？）坐标
+
+u0是检测器输出的roi坐标。
+
+nx,ny定义了一个矩形区域，nx和ny分别为矩形区域的长宽，这个区域中的每一个元素都是一个跟踪点。
+
+函数首先计算了矩形区域需要平移的步长，然后依次平移该矩形区域，每一次平移都计算矩形区域中的极大值，总共平移nx*ny次。
+
+bx,by为图像边缘保护距离，目的是防止算法计算图像边缘梯度。
+
+*/
 void template_matching_based_tracker::find_2d_points(IplImage * image, int bx, int by)
 {
   IplImage * gradient = compute_gradient(image);	//计算图像梯度
 
-  const float stepx = float(u0[2] - u0[0] - 2 * bx) / (nx - 1);	//与感兴趣区域长宽有关（？）
-  const float stepy = float(u0[5] - u0[1] - 2 * by) / (ny - 1);
+  const float stepx = float(u0[2] - u0[0] - 2 * bx) / (nx - 1);	//计算矩形区域横向平移步长
+  const float stepy = float(u0[5] - u0[1] - 2 * by) / (ny - 1);	//计算矩形区域纵向平移步长
   for(int j = 0; j < ny; j++)
     for(int i = 0; i < nx; i++)
-      get_local_maximum(gradient,
-			int(u0[0] + bx + i * stepx + 0.5),
-			int(u0[1] + by + j * stepy + 0.5),
-			int(stepx), int(stepy),
+      get_local_maximum(gradient,	//梯度图像
+			int(u0[0] + bx + i * stepx + 0.5),	//求极大值的范围是一个矩形，此参数是矩形的左上角横坐标
+			int(u0[1] + by + j * stepy + 0.5),	//上述矩形左上角纵坐标
+			int(stepx), int(stepy),	//上述矩形长、宽
 			m[2 * (j * nx + i)],
-			m[2 * (j * nx + i) + 1]);
+			m[2 * (j * nx + i) + 1]);	//存储求得的所有极大值
 
   cvReleaseImage(&gradient);
 }
@@ -315,9 +330,9 @@ void template_matching_based_tracker::learn(IplImage * image,
   u0[0] = xUL; u0[1] = yUL;
   u0[2] = xBR; u0[3] = yUL;
   u0[4] = xBR; u0[5] = yBR;
-  u0[6] = xUL; u0[7] = yBR;	//（？？？）
+  u0[6] = xUL; u0[7] = yBR;	//检测器roi区域
 
-  find_2d_points(image, bx, by);	//（？？？）
+  find_2d_points(image, bx, by);	//计算roi的中极大值
 
   U = cvCreateMat(8, 1, CV_32F);	//初始化一个矩阵，8*1
   u = U->data.fl;	//指针指向图像数据，以32bits浮点数为单位

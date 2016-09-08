@@ -348,10 +348,10 @@ int main(int argc, char ** argv)
     tracker->learn(detector->model_image,
 		   5, // number of used matrices (coarse-to-fine)用到的矩阵（由粗到细）
 		   40, // max motion in pixel used to train to coarser matrix （训练粗矩阵的时候所用的最大动作数？）
-		   20, 20, // defines a grid. Each cell will have one tracked point.定义一个框架，每个单元里有一个跟踪点
-		   detector->u_corner[0], detector->v_corner[1], //检测器感兴趣区域（？？？）
+		   20, 20, // defines a grid. Each cell will have one tracked point.定义一个矩形区域，每个单元里有一个跟踪点
+		   detector->u_corner[0], detector->v_corner[1], //检测器roi区域
 		   detector->u_corner[2], detector->v_corner[2],
-		   40, 40, // neighbordhood for local maxima selection 供选择的最大邻域
+		   40, 40, // neighbordhood for local maxima selection 计算极大值时对图像边缘的保护距离
 		   10000 // number of training samples 训练样本数
 		   );	//训练跟踪器
     tracker->save(trackerfn.c_str());	//存储跟踪器数据
