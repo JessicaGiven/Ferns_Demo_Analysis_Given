@@ -119,29 +119,30 @@ void template_matching_based_tracker::move(int x, int y, float & x2, float & y2,
   y2 = y + d * sinf(a);
 }
 
+//极大值矩阵标准化函数（？？？）
 bool template_matching_based_tracker::normalize(CvMat * V)
 {
   float sum = 0.0, sum2 = 0.0;
   float * v = V->data.fl;
 
   for(int i = 0; i < V->rows; i++) {
-    sum += v[i];
-    sum2 += v[i] * v[i];
+    sum += v[i];	//对矩阵前行数个元素求和
+    sum2 += v[i] * v[i];	//对矩阵前行数个元素平方并求和
   }
 
   // Not enough contrast,  better not put this sample into the training set:
-  if (sum < (V->rows * 10))
+  if (sum < (V->rows * 10))	//如果求和结果小于十倍行数，则认定其对比度不足，不将其加入训练集中
     return false;
 
-  float mean = sum / V->rows;
-  float inv_sigma = 1.0 / sqrt(sum2 / V->rows - mean * mean);
+  float mean = sum / V->rows;	//求和平均值
+  float inv_sigma = 1.0 / sqrt(sum2 / V->rows - mean * mean);	//计算方差的倒数（？）
 
   // Not enough contrast,  better not put this sample into the training set:
-  if (!finite(inv_sigma))
+  if (!finite(inv_sigma))	//判断方差倒数是否为无穷，如果是无穷，则不加入训练集
     return false;
 
-  for(int i = 0; i < V->rows; i++)
-    v[i] = inv_sigma * (v[i] - mean);
+  for(int i = 0; i < V->rows; i++)	
+    v[i] = inv_sigma * (v[i] - mean);	//将极大值矩阵前行数个元素标准化
 
   return true;
 }
@@ -229,6 +230,7 @@ void template_matching_based_tracker::find_2d_points(IplImage * image, int bx, i
   cvReleaseImage(&gradient);
 }
 
+//以矩阵计算
 void template_matching_based_tracker::compute_As_matrices(IplImage * image, int max_motion, int Ns)
 {
   As = new CvMat*[number_of_levels];
@@ -341,8 +343,8 @@ void template_matching_based_tracker::learn(IplImage * image,
   i0 = I0->data.fl;	//指针指向图像数据，以32bits浮点数为单位
 
   for(int i = 0; i < nx * ny; i++)
-    i0[i] = mcvRow(image, m[2 * i + 1], unsigned char)[ m[2 * i] ];
-  bool ok = normalize(I0);
+    i0[i] = mcvRow(image, m[2 * i + 1], unsigned char)[ m[2 * i] ];	//将极大值点数据导出至i0
+  bool ok = normalize(I0);	//将极大值矩阵标准化
   if (!ok) {
     cerr << "> in template_matching_based_tracker::learn :" << endl;
     cerr << "> Template matching: image has not enough contrast." << endl;
