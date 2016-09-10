@@ -147,6 +147,7 @@ bool template_matching_based_tracker::normalize(CvMat * V)
   return true;
 }
 
+//随机加噪函数
 void template_matching_based_tracker::add_noise(CvMat * V)
 {
   float * v = V->data.fl;
@@ -233,16 +234,19 @@ void template_matching_based_tracker::find_2d_points(IplImage * image, int bx, i
 //以矩阵计算
 void template_matching_based_tracker::compute_As_matrices(IplImage * image, int max_motion, int Ns)
 {
-  As = new CvMat*[number_of_levels];
+  As = new CvMat*[number_of_levels];	//新建多个矩阵
 
+  //新建矩阵
   CvMat * Y = cvCreateMat(8, Ns, CV_32F);
   CvMat * H = cvCreateMat(nx * ny, Ns, CV_32F);
   CvMat * HHt = cvCreateMat(nx * ny, nx * ny, CV_32F);
   CvMat * HHt_inv = cvCreateMat(nx * ny, nx * ny, CV_32F);
   CvMat * Ht_HHt_inv = cvCreateMat(Ns, nx * ny, CV_32F);
 
+  //新建单应性类
   homography06 ft;
 
+  //
   for(int level = 0; level < number_of_levels; level++) {
 
     int n = 0;
@@ -269,42 +273,45 @@ void template_matching_based_tracker::compute_As_matrices(IplImage * image, int 
       for(int i = 0; i < nx * ny; i++) {
 	int x1, y1;
 
-	ft.transform_point(m[2 * i], m[2 * i + 1], x1, y1);
-	i1[i] = mcvRow(image, y1, unsigned char)[x1];
+	ft.transform_point(m[2 * i], m[2 * i + 1], x1, y1);	//x1,y1为单应变换后的坐标
+	i1[i] = mcvRow(image, y1, unsigned char)[x1];	//利用单应变换后的坐标取出输入图像对应部分
       }
-      add_noise(I1);
-      bool ok = normalize(I1);
+      add_noise(I1);	//对输入图像加入随机噪声
+      bool ok = normalize(I1);	//标准化
       if (ok) {
 	for(int i = 0; i < nx * ny; i++)
-	  cvmSet(H, i, n, i1[i] - i0[i]);
+	  cvmSet(H, i, n, i1[i] - i0[i]);	//将单应变换且加噪后的极大值图像与极大值图像相减，存入H
 	n++;
       }
     }
-
     cout << "Level: " << level << "                                        " << endl;
     cout << " - " << n << " training samples generated." << endl;
 
     As[level] = cvCreateMat(8, nx * ny, CV_32F);
 
+	//求矩阵H平方
     cout << " - computing HHt..." << flush;
     cvGEMM(H, H, 1.0, 0, 0.0, HHt, CV_GEMM_B_T);
     cout << "done." << endl;
 
+	//求矩阵H平方的逆
     cout << " - inverting HHt..." << flush;
     if (cvInvert(HHt, HHt_inv, CV_SVD_SYM) == 0) {
       cerr << "> In template_matching_based_tracker::compute_As_matrices :" << endl;
       cerr << " Can't compute HHt matrix inverse!" << endl;
-      cerr << " damn!" << endl;
+      cerr << " damn!" << endl;	//该死的！
       exit(-1);
     }
     cout << "done." << endl;
 
+	//求矩阵H和矩阵H平方的乘积
     cout << " - computing H(HHt)^-1..." << flush;
     cvGEMM(H, HHt_inv, 1.0, 0, 0.0, Ht_HHt_inv, CV_GEMM_A_T);
     cout << "done." << endl;
-    
+
+    //求上述结果的逆
     cout << " - computing YH(HHt)^-1..." << flush;
-    cvMatMul(Y, Ht_HHt_inv, As[level]);
+    cvMatMul(Y, Ht_HHt_inv, As[level]);	//As为此函数输出结果
     cout << "done." << endl;
   }
 
