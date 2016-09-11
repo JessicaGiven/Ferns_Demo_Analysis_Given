@@ -367,11 +367,12 @@ void template_matching_based_tracker::learn(IplImage * image,
   compute_As_matrices(image, max_motion, Ns);
 }
 
+//跟踪器初始化函数
 void template_matching_based_tracker::initialize(void)
 {
   cvCopy(U0, U);
 
-  // Set f to Id:
+  // Set f to Id:对u0进行单应变换
   he.estimate(&f,
 	      u0[0], u0[1], u[0], u[1],
 	      u0[2], u0[3], u[2], u[3],
@@ -440,6 +441,7 @@ void template_matching_based_tracker::initialize(int x0, int y0,
 //         //cgret[8] = 1;
 // 	}
 
+//跟踪函数
 bool template_matching_based_tracker::track(IplImage * input_frame)
 {
   homography06 fs;
@@ -450,15 +452,17 @@ bool template_matching_based_tracker::track(IplImage * input_frame)
 	int x1, y1;
 
 	f.transform_point(m[2 * i], m[2 * i + 1], x1, y1);
+	//判断之前极大值矩阵的长宽，如果小于0或者其长宽大于等于输入帧时，则判定跟踪失败
 	if (x1 < 0 || y1 < 0 || x1 >= input_frame->width || y1 >= input_frame->height)
 	  return false;
-
+	//取出输入帧对应范围的图像
 	i1[i] = mcvRow(input_frame, y1, unsigned char)[x1];
       }
-      normalize(I1);
-      cvSub(I1, I0, DI);
+      normalize(I1);	//标准化
+      cvSub(I1, I0, DI);	//输入帧-极大值矩阵
 
-      cvMatMul(As[level], DI, DU);
+      cvMatMul(As[level], DI, DU);	//compute函数输出结果与上述结果进行相乘
+	  //下面的代码看不太懂
       he.estimate(&fs,
 		  u0[0],  u0[1],  u0[0] - du[0], u0[1] - du[1],
 		  u0[2],  u0[3],  u0[2] - du[2], u0[3] - du[3],
@@ -473,7 +477,7 @@ bool template_matching_based_tracker::track(IplImage * input_frame)
       for(int i = 0; i < 9; i++) f.data.fl[i] /= norm;
     }
   }
-
+  //输出结果是指示跟踪目标的跟踪框坐标
   f.transform_point(u0[0], u0[1], u[0], u[1]);
   f.transform_point(u0[2], u0[3], u[2], u[3]);
   f.transform_point(u0[4], u0[5], u[4], u[5]);

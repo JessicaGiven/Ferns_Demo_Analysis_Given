@@ -32,14 +32,15 @@ using namespace std;
 
 static const int prime = 307189;
 
+//仿射变换图像生成器生成函数
 affine_image_generator06::affine_image_generator06(void)
 {
-  original_image = 0;
-  generated_image = 0;
-  original_image_with_128_as_background = 0;
+  original_image = 0;	//初始化原始图像
+  generated_image = 0;	//初始化生成图像
+  original_image_with_128_as_background = 0;	//背景图像（？）
 
-  white_noise = new char[prime];
-  limited_white_noise = new int[prime];
+  white_noise = new char[prime];	//白噪声（？）
+  limited_white_noise = new int[prime];	//有限白噪声（？）
 
   set_default_values();
 
@@ -89,10 +90,11 @@ void affine_image_generator06::save_generated_images(char * generic_name)
   strcpy(generic_name_of_saved_images, generic_name);
 }
 
+//仿射变换图像生成器默认参数设置函数
 void affine_image_generator06::set_default_values(void)
 {
-  set_noise_level(20);
-  set_use_random_background(true);
+  set_noise_level(20);	//设置噪声强度
+  set_use_random_background(true);	//
   set_add_gaussian_smoothing(true);
   set_change_intensities(true);
   add_noise = true;

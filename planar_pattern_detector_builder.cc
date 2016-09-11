@@ -39,7 +39,7 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
 									    int roi_up_left_u, int roi_up_left_v,	//¼ì²âÇøÓò×ø±ê
 									    int roi_bottom_right_u, int roi_bottom_right_v)	//¼ì²âÇøÓò×ø±ê
 {
-  planar_pattern_detector * detector = new planar_pattern_detector();
+  planar_pattern_detector * detector = new planar_pattern_detector();	//³õÊ¼»¯¿Õ°×¼ì²âÆ÷
 
   detector->image_generator->set_transformation_range(range);
 

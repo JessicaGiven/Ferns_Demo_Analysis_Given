@@ -28,11 +28,12 @@ using namespace std;
 #include "planar_pattern_detector.h"
 #include "buffer_management.h"
 
+//初始化空白检测器函数
 planar_pattern_detector::planar_pattern_detector(void)
 {
   model_image = 0;
 
-  image_generator = new affine_image_generator06();
+  image_generator = new affine_image_generator06(); //新建仿射变换图像生成器
   point_detector = new pyr_yape06();
 
   model_points = detected_points = 0;
