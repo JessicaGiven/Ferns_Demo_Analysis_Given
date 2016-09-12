@@ -41,15 +41,15 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
 {
   planar_pattern_detector * detector = new planar_pattern_detector();	//初始化空白检测器
 
-  detector->image_generator->set_transformation_range(range);
+  detector->image_generator->set_transformation_range(range);	//设定仿射变换范围
 
-  char detector_data_filename[1000];
-  if (given_detector_data_filename == 0)
+  char detector_data_filename[1000];	//检测器数据文件文件名
+  if (given_detector_data_filename == 0)	//从键盘获得检测器数据文件文件名
     sprintf(detector_data_filename, "%s.detector_data", image_name);
   else
     strcpy(detector_data_filename, given_detector_data_filename);
 
-  if (detector->load(detector_data_filename))
+  if (detector->load(detector_data_filename))	//读取检测器数据文件
     cout << "> [planar_pattern_detector_builder] " << detector_data_filename << " file read." << endl;
   else {
     delete detector;
@@ -57,6 +57,7 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
     cout << "> [planar_pattern_detector_builder] Can't find file " << detector_data_filename << "." << endl;
     cout << "> [planar_pattern_detector_builder] Creating one..." << endl;
 
+	//检测器训练函数
     detector = learn(image_name,
 		     range,
 		     maximum_number_of_points_on_model,
@@ -68,7 +69,7 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
 		     roi_up_left_u, roi_up_left_v,
 		     roi_bottom_right_u, roi_bottom_right_v);
 
-    if (detector != 0) detector->save(detector_data_filename);
+    if (detector != 0) detector->save(detector_data_filename);	
   }
 
   return detector;
@@ -125,16 +126,17 @@ planar_pattern_detector * planar_pattern_detector_builder::just_load(const char 
   }
 }
 
-planar_pattern_detector * planar_pattern_detector_builder::learn(const char * image_name,
-								 affine_transformation_range * range,
-								 int maximum_number_of_points_on_model,
-								 int number_of_generated_images_to_find_stable_points,
-								 double minimum_number_of_views_rate,
-								 int patch_size, int yape_radius, int number_of_octaves,
-								 int number_of_ferns, int number_of_tests_per_fern,
-								 int number_of_samples_for_refinement, int number_of_samples_for_test,
-								 int roi_up_left_u, int roi_up_left_v,
-								 int roi_bottom_right_u, int roi_bottom_right_v)
+//检测器训练函数
+planar_pattern_detector * planar_pattern_detector_builder::learn(const char * image_name,	//检测器数据文件
+								 affine_transformation_range * range,	//仿射变换范围
+								 int maximum_number_of_points_on_model,	//模型中的最大点数
+								 int number_of_generated_images_to_find_stable_points,	//生成寻找稳定点的图像数
+								 double minimum_number_of_views_rate,	//最小帧率
+								 int patch_size, int yape_radius, int number_of_octaves,	//（？？？）
+								 int number_of_ferns, int number_of_tests_per_fern,	//蕨数量；每个蕨的测试数
+								 int number_of_samples_for_refinement, int number_of_samples_for_test,	//细化样本数；测试样本数
+								 int roi_up_left_u, int roi_up_left_v,	//感兴趣区域左上横坐标；感兴趣区域左上纵坐标
+								 int roi_bottom_right_u, int roi_bottom_right_v)	//感兴趣区域右下横坐标；感兴趣区域右下纵坐标
 {
   planar_pattern_detector * detector = new planar_pattern_detector();
 

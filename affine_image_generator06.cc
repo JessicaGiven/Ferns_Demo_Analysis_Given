@@ -42,9 +42,9 @@ affine_image_generator06::affine_image_generator06(void)
   white_noise = new char[prime];	//白噪声（？）
   limited_white_noise = new int[prime];	//有限白噪声（？）
 
-  set_default_values();
+  set_default_values();	//设置仿射变换图像生成器初始参数
 
-  save_images = false;
+  save_images = false;	//存储图像标志
 }
 
 affine_image_generator06::~affine_image_generator06(void)
@@ -94,12 +94,13 @@ void affine_image_generator06::save_generated_images(char * generic_name)
 void affine_image_generator06::set_default_values(void)
 {
   set_noise_level(20);	//设置噪声强度
-  set_use_random_background(true);	//
-  set_add_gaussian_smoothing(true);
-  set_change_intensities(true);
-  add_noise = true;
+  set_use_random_background(true);	//使用随机背景
+  set_add_gaussian_smoothing(true);	//加入高斯平滑
+  set_change_intensities(true);	//改变强度（？）
+  add_noise = true;	//加入噪声
 }
 
+//噪声强度设置函数
 void affine_image_generator06::set_noise_level(int noise_level)
 {
   this->noise_level = noise_level;

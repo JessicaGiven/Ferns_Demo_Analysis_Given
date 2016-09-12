@@ -34,14 +34,15 @@ planar_pattern_detector::planar_pattern_detector(void)
   model_image = 0;
 
   image_generator = new affine_image_generator06(); //新建仿射变换图像生成器
-  point_detector = new pyr_yape06();
+  point_detector = new pyr_yape06();	//新建点检测器
 
+  //设置部分参数
   model_points = detected_points = 0;
   match_probabilities = 0;
 
-  maximum_number_of_points_to_detect = 500;
+  maximum_number_of_points_to_detect = 500;	//设置最大检测点数
 
-  H_estimator = new homography_estimator;
+  H_estimator = new homography_estimator;	//新建单应估计器
 }
 
 planar_pattern_detector::~planar_pattern_detector(void)
@@ -61,6 +62,7 @@ planar_pattern_detector::~planar_pattern_detector(void)
   }
 }
 
+//检测器数据文件读取函数
 bool planar_pattern_detector::load(const char * filename)
 {
   ifstream f(filename, ios::binary);

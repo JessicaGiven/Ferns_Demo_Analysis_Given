@@ -39,13 +39,13 @@ const int pyr_yape06::R = 5, pyr_yape06::Rp = 3; // -> 3890 to 1479
 
 pyr_yape06::pyr_yape06(void)
 {
-  all_keypoints = new keypoint[Maximum_number_of_points];
+  all_keypoints = new keypoint[Maximum_number_of_points];	//新建二维特征点类
   laplacian = 0;
 
   //   set_laplacian_threshold(10);
   //   set_min_eigenvalue_threshold(10);
-  set_laplacian_threshold(30);
-  set_min_eigenvalue_threshold(25);
+  set_laplacian_threshold(30);	//设置拉普拉斯阈值
+  set_min_eigenvalue_threshold(25);	//设置最小特征值阈值
 }
 
 pyr_yape06::~pyr_yape06(void)

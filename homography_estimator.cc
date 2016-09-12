@@ -31,6 +31,7 @@
 
 using namespace std;
 
+//单应变换估计器生成函数
 homography_estimator::homography_estimator(void)
 {
   AA = cvCreateMat(8, 9, CV_32FC1);

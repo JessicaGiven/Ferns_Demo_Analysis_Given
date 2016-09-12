@@ -304,12 +304,12 @@ void template_matching_based_tracker::compute_As_matrices(IplImage * image, int 
     }
     cout << "done." << endl;
 
-	//求矩阵H和矩阵H平方的乘积
+	//求矩阵H和矩阵H平方逆的乘积
     cout << " - computing H(HHt)^-1..." << flush;
     cvGEMM(H, HHt_inv, 1.0, 0, 0.0, Ht_HHt_inv, CV_GEMM_A_T);
     cout << "done." << endl;
 
-    //求上述结果的逆
+    //求上述结果与Y的乘积
     cout << " - computing YH(HHt)^-1..." << flush;
     cvMatMul(Y, Ht_HHt_inv, As[level]);	//As为此函数输出结果
     cout << "done." << endl;

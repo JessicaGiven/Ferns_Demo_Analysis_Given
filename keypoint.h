@@ -27,6 +27,7 @@
 
 /*!
   \brief A 2D feature point as detected by a point detector
+  点检测器检测出的二维特征点类
 */
 class keypoint
 {
