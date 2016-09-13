@@ -138,7 +138,7 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
 								 int roi_up_left_u, int roi_up_left_v,	//感兴趣区域左上横坐标；感兴趣区域左上纵坐标
 								 int roi_bottom_right_u, int roi_bottom_right_v)	//感兴趣区域右下横坐标；感兴趣区域右下纵坐标
 {
-  planar_pattern_detector * detector = new planar_pattern_detector();
+  planar_pattern_detector * detector = new planar_pattern_detector();	//新建二维特征检测器
 
   strcpy(detector->image_name, image_name);
 
