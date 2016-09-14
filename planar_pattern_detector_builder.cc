@@ -127,7 +127,7 @@ planar_pattern_detector * planar_pattern_detector_builder::just_load(const char 
 }
 
 //检测器训练函数
-planar_pattern_detector * planar_pattern_detector_builder::learn(const char * image_name,	//检测器数据文件
+planar_pattern_detector * planar_pattern_detector_builder::learn(const char * image_name,	//检测器数据文件文件名
 								 affine_transformation_range * range,	//仿射变换范围
 								 int maximum_number_of_points_on_model,	//模型中的最大点数
 								 int number_of_generated_images_to_find_stable_points,	//生成寻找稳定点的图像数
@@ -140,33 +140,35 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
 {
   planar_pattern_detector * detector = new planar_pattern_detector();	//新建二维特征检测器
 
-  strcpy(detector->image_name, image_name);
+  strcpy(detector->image_name, image_name);	//复制检测器数据文件文件名
 
-  detector->model_image = mcvLoadImage(image_name, 0);
-  if (detector->model_image == 0) return 0;
+  detector->model_image = mcvLoadImage(image_name, 0);	//读取模型图像
+  if (detector->model_image == 0) return 0;	//判断读取模型图像是否成功
+  //判断图像颜色通道数，若为非灰度图像则返回错误
   if (detector->model_image->nChannels != 1) {
     cerr << ">! [planar_pattern_detector_builder::learn] Wrong image format" << endl;
     return 0;
   }
-
+  //若roi左上角横坐标为-1
   if (roi_up_left_u == -1) {
-    char roi_filename[1000];
-    sprintf(roi_filename, "%s.roi", image_name);
-    ifstream roif(roi_filename);
+    char roi_filename[1000];	//初始化roi文件名
+    sprintf(roi_filename, "%s.roi", image_name);	//从键盘读取roi文件名
+    ifstream roif(roi_filename);	//读取roi文件
     if (roif.good()) {
       cout << "> [planar_pattern_detector_builder::learn] Reading ROI from file " << roi_filename << ".\n";
-      for(int i = 0; i < 4; i++)
+      for(int i = 0; i < 4; i++)	//读取检测器输入坐标
 	roif >> detector->u_corner[i] >> detector->v_corner[i];
       roif.close();
     } else {
       cout << "> [planar_pattern_detector_builder::learn] No ROI file found. Taking the whole image as object." << endl;
-
+	  //如果找不到roi文件就用整幅图像的区域作为roi
       detector->u_corner[0] = 0;                                detector->v_corner[0] = 0;
       detector->u_corner[1] = detector->model_image->width - 1; detector->v_corner[1] = 0;
       detector->u_corner[2] = detector->model_image->width - 1; detector->v_corner[2] = detector->model_image->height - 1;
       detector->u_corner[3] = 0;                                detector->v_corner[3] = detector->model_image->height - 1;
     }
   } else {
+	  //直接使用函数输入的roi区域
     detector->u_corner[0] = roi_up_left_u;      detector->v_corner[0] = roi_up_left_v;
     detector->u_corner[1] = roi_bottom_right_u; detector->v_corner[1] = roi_up_left_v;
     detector->u_corner[2] = roi_bottom_right_u; detector->v_corner[2] = roi_bottom_right_v;
