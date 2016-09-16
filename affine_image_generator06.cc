@@ -112,23 +112,30 @@ void affine_image_generator06::set_noise_level(int noise_level)
   }
 }
 
+//设置原始图像函数
 void affine_image_generator06::set_original_image(IplImage * p_original_image,
                                                   int generated_image_width,
                                                   int generated_image_height)
 {
-  if (original_image != 0) cvReleaseImage(&original_image);
-  original_image = cvCloneImage(p_original_image);
+  if (original_image != 0) cvReleaseImage(&original_image);	//原始图像若已存在则直接释放
+  original_image = cvCloneImage(p_original_image);	//从输入图像处克隆到原始图像
 
-  if (generated_image != 0) cvReleaseImage(&generated_image);
-  if (generated_image_width < 0)
+  if (generated_image != 0) cvReleaseImage(&generated_image);	//生成图像若已存在则直接释放
+  if (generated_image_width < 0)	//生成图像宽度若小于0，则从摄入图像处克隆。反之，则新建原尺寸灰度图像
     generated_image = cvCloneImage(p_original_image);
   else
     generated_image = cvCreateImage(cvSize(generated_image_width, generated_image_height), IPL_DEPTH_8U, 1);
-
-  if (original_image_with_128_as_background != 0) cvReleaseImage(&original_image_with_128_as_background);
-  original_image_with_128_as_background = cvCloneImage(p_original_image);
-  mcvReplace(original_image_with_128_as_background, 128, int(127));
+  
+  if (original_image_with_128_as_background != 0) cvReleaseImage(&original_image_with_128_as_background);	//判断图像是否存在并释放
+  original_image_with_128_as_background = cvCloneImage(p_original_image);	//从输入图象处克隆图像
+  mcvReplace(original_image_with_128_as_background, 128, int(127));	//将图像中128的像素替换为127
 }
+
+/*设置mask函数
+
+将指定矩形范围的图像覆盖为白色
+
+*/
 
 void affine_image_generator06::set_mask(int x_min, int y_min, int x_max, int y_max)
 {

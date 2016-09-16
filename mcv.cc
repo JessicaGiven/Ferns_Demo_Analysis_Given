@@ -566,6 +566,13 @@ IplImage * mcvCreateRandomImage(CvSize size, int depth, int nChannels)
   return result;
 }
 
+/*像素替换函数
+
+
+将输入图像中的old_value替换成new_value
+
+
+*/
 void mcvReplace(IplImage * image, int old_value, int new_value)
 {
   for(int l = 0; l < image->height; l++)

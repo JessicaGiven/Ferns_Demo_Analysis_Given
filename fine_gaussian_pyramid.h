@@ -32,10 +32,10 @@
   >+------------<--------------------------------------------------+
   |                                                                |
   |                                                                |
-  |<- - - -border_size - - ->¦                                     |
-  |                          ¦                                     |
-  |                          ¦                                     |
-  |             inner_border ¦                                     |
+  |<- - - -border_size - - ->?                                    |
+  |                          ?                                    |
+  |                          ?                                    |
+  |             inner_border ?                                    |
   |            >+-----------<+------------------------+            |
   |             |                                     |            |
   |             |                                     |            |
@@ -47,15 +47,17 @@
   |             |            |             |          |            |
   |             |            |             |          |            |
   |             |            |             |          |            |
-  ¦             ¦            ¦             ¦          ¦            ¦
-  ¦                                                                ¦
-  ¦<- total_width - - - - - - - - - - - - - - - - - - - - - - - - >¦
+  ?            ?           ?            ?         ?           ?
+  ?                                                               ?
+  ?- total_width - - - - - - - - - - - - - - - - - - - - - - - - >?
 
 
   full_images[k]->width  = total_width
   aztec_images[k]->width = total_width / (2 ^ octave)   octave >= 0
 
 */
+
+//¸ßË¹½ð×ÖËþÀà
 
 class fine_gaussian_pyramid
 {

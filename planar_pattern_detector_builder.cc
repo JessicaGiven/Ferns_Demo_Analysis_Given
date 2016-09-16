@@ -174,24 +174,24 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
     detector->u_corner[2] = roi_bottom_right_u; detector->v_corner[2] = roi_bottom_right_v;
     detector->u_corner[3] = roi_up_left_u;      detector->v_corner[3] = roi_bottom_right_v;
   }
-
+  //设置检测器的一些参数
   detector->patch_size = patch_size;
   detector->yape_radius = yape_radius;
   detector->number_of_octaves = number_of_octaves;
-
-  detector->image_generator->set_original_image(detector->model_image);
+  //设置图片生成器的一些参数
+  detector->image_generator->set_original_image(detector->model_image);	//设置原始图像
   detector->image_generator->set_mask(detector->u_corner[0], detector->v_corner[0],
-				      detector->u_corner[2], detector->v_corner[2]);
-  detector->image_generator->set_transformation_range(range);
+				      detector->u_corner[2], detector->v_corner[2]);	//设置mask
+  detector->image_generator->set_transformation_range(range);	//设置变换范围
 
 
-  detector->pyramid = new fine_gaussian_pyramid(yape_radius, patch_size, number_of_octaves);
+  detector->pyramid = new fine_gaussian_pyramid(yape_radius, patch_size, number_of_octaves);	//新建高斯金字塔
 
   detect_most_stable_model_points(detector,
 				  maximum_number_of_points_on_model,
                                   yape_radius, number_of_octaves,
                                   number_of_generated_images_to_find_stable_points,
-                                  minimum_number_of_views_rate);
+                                  minimum_number_of_views_rate);	//稳定点检测
 
 
   detector->save_image_of_model_points("model_points.bmp", patch_size);

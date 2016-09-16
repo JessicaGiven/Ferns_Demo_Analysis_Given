@@ -31,6 +31,7 @@ using namespace std;
 #include "fine_gaussian_pyramid.h"
 // #include "linear_filter.h"
 
+//新建高斯金字塔函数
 fine_gaussian_pyramid::fine_gaussian_pyramid(int type, int outer_border, int number_of_octaves, int inner_border)
 {
   this->type = type;
