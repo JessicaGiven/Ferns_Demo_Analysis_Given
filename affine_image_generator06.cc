@@ -147,6 +147,7 @@ void affine_image_generator06::set_mask(int x_min, int y_min, int x_max, int y_m
   }
 }
 
+//仿射变换矩阵生成函数（变换坐标系，原理见笔记）
 void affine_image_generator06::generate_affine_transformation(float a[6],
                                                               float initialTx, float initialTy,
                                                               float theta, float phi,
