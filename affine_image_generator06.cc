@@ -74,8 +74,8 @@ void affine_image_generator06::set_transformation_range(affine_transformation_ra
 
 void affine_image_generator06::generate_Id_image(void)
 {
-  generate_Id_affine_transformation();
-  generate_affine_image();
+  generate_Id_affine_transformation();	//生成仿射变换矩阵
+  generate_affine_image();	//生成仿射变换图像
 }
 
 void affine_image_generator06::generate_random_affine_image(void)
@@ -202,7 +202,7 @@ void affine_image_generator06::generate_random_affine_transformation(void)
 
 void affine_image_generator06::generate_Id_affine_transformation(void)
 {
-  generate_affine_transformation(a, 0, 0 , 0, 0, 1, 1, 0, 0);
+  generate_affine_transformation(a, 0, 0 , 0, 0, 1, 1, 0, 0);	//生成仿射变换矩阵
 }
 
 void affine_image_generator06::affine_transformation(float p_a[6],
@@ -233,7 +233,7 @@ void affine_image_generator06::inverse_affine_transformation(float u, float v, f
   inverse_affine_transformation(a, u, v, nu, nv);
 }
 
-
+//加噪函数
 void affine_image_generator06::add_white_noise(IplImage * image, int gray_level_to_avoid)
 {
   for(int y = 0; y < image->height; y++) {
@@ -255,6 +255,7 @@ void affine_image_generator06::add_white_noise(IplImage * image, int gray_level_
   }
 }
 
+//指定值噪声替代函数
 void affine_image_generator06::replace_by_noise(IplImage * image, int value)
 {
   for(int y = 0; y < image->height; y++) {
@@ -271,37 +272,40 @@ void affine_image_generator06::replace_by_noise(IplImage * image, int value)
 
 void affine_image_generator06::generate_affine_image(void)
 {
-  CvMat A = cvMat(2, 3, CV_32F, a);
+  CvMat A = cvMat(2, 3, CV_32F, a);	//初始化仿射变换矩阵
 
   if (use_random_background)
-    cvSet(generated_image, cvScalar(128));
+    cvSet(generated_image, cvScalar(128));	//将生成图像所有像素设置成128
   else
-    cvSet(generated_image, cvScalar(rand() % 256));
+    cvSet(generated_image, cvScalar(rand() % 256));	//将生成图像所有像素随机设置
 
+  //对原始图片进行仿射变换，生成生成图像
   cvWarpAffine(original_image_with_128_as_background, generated_image, &A,
 	       CV_INTER_NN + CV_WARP_FILL_OUTLIERS /* + CV_WARP_INVERSE_MAP*/, cvScalarAll(128));
 
   if (use_random_background)
-    replace_by_noise(generated_image, 128);
+    replace_by_noise(generated_image, 128);	//使用白噪声替代图像中像素值为128的点
 
+  //使用随机参数对图像进行高斯平滑（为什么用随机参数？？？）
   if (add_gaussian_smoothing && rand() % 3 == 0) {
     int aperture = 3 + 2 * (rand() % 3);
     cvSmooth(generated_image, generated_image, CV_GAUSSIAN, aperture, aperture);
   }
 
+  //对图像进行线性变换（？）
   if (change_intensities) cvCvtScale(generated_image, generated_image, rand(0.8f, 1.2f), rand(-10, 10));
 
   //   mcvSaveImage("g.bmp", generated_image);
   //   exit(0);
 
-
+  //对图像加入白噪声
   if (noise_level > 0 && add_noise)
     if (use_random_background) add_white_noise(generated_image);
     else add_white_noise(generated_image, 128);
 
   if (save_images) {
     static int n = 0;
-    mcvSaveImage(generic_name_of_saved_images, n, generated_image);
+    mcvSaveImage(generic_name_of_saved_images, n, generated_image);	//存储图像
     n++;
   }
 }

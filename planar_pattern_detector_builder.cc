@@ -245,7 +245,7 @@ void planar_pattern_detector_builder::detect_most_stable_model_points(planar_pat
   pyr_yape06               * point_detector  = detector->point_detector;
 
   image_generator->disable_random_background();	//关闭随机背景
-  image_generator->generate_Id_image();	//
+  image_generator->generate_Id_image();	//生成Id图像
   pyramid->set_image(image_generator->generated_image);
   if (point_detector == 0) detector->point_detector = new pyr_yape06(); point_detector = detector->point_detector;
   keypoint * tmp_model_point_array = new keypoint[K * maximum_number_of_points_on_model];
