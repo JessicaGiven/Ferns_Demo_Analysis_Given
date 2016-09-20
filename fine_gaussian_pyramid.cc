@@ -94,24 +94,25 @@ fine_gaussian_pyramid::~fine_gaussian_pyramid()
   free();
 }
 
+//高斯金字塔相关变量初始化函数
 void fine_gaussian_pyramid::free(void)
 {
-  if (original_image != 0)
+  if (original_image != 0)	//清零原始图像
     cvReleaseImage(&original_image);
-
+  //清零aztec_pyramid
   if (aztec_pyramid != 0) {
     for(int i = 0; i < 4 * number_of_octaves; i++)
       if (aztec_pyramid[i] != 0)
 	cvReleaseImage(&aztec_pyramid[i]);
     delete [] aztec_pyramid;
   }
-
+  //清零full_images
   if (full_images != 0) {
     for(int i = 0; i < 4 * number_of_octaves; i++)
       cvReleaseImage(&full_images[i]);
     delete [] full_images;
   }
-
+  //初始化部分参数
   delete [] coeffs;
   delete [] add_a_row;
   delete [] add_a_col;
@@ -191,6 +192,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
   int octave_total_width  = total_width  = width  + 2 * border_size;
   int octave_total_height = total_height = height + 2 * border_size;
 
+  //初始化参数
   aztec_pyramid = new IplImage*[number_of_octaves * 4];
   full_images = new IplImage*[number_of_octaves * 4];
   coeffs = new float[number_of_octaves * 4];
@@ -198,10 +200,11 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
   add_a_row = new bool[number_of_octaves * 4];
   add_a_col = new bool[number_of_octaves * 4];
 
-  original_image = cvCreateImage(cvSize(width + 2 * inner_border, height + 2 * inner_border), IPL_DEPTH_8U, 1);
-  intermediate_int_image = cvCreateImage(cvSize(total_width, total_height), IPL_DEPTH_32S, 1);
-  widthStep_int  = intermediate_int_image->widthStep / sizeof(int);
+  original_image = cvCreateImage(cvSize(width + 2 * inner_border, height + 2 * inner_border), IPL_DEPTH_8U, 1);	//初始化原始图像
+  intermediate_int_image = cvCreateImage(cvSize(total_width, total_height), IPL_DEPTH_32S, 1);	//初始化中间图像
+  widthStep_int  = intermediate_int_image->widthStep / sizeof(int);	//初始化步长
 
+  //根据yape_pyramid（？）的类型初始化octave
   switch(type) {
   case yape_pyramid_3: {
     float c = 1.F;
@@ -278,7 +281,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 void fine_gaussian_pyramid::set_image(const IplImage * image)
 {
   if (width + 2 * inner_border != image->width || height + 2 * inner_border != image->height) {
-    free();
+    free();	//初始化高斯金字塔变量
     alloc(image->width - 2 * inner_border, image->height - 2 * inner_border, outer_border, number_of_octaves, inner_border);
   }
 
