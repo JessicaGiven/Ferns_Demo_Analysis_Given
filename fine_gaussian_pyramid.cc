@@ -179,7 +179,7 @@ int * fine_gaussian_pyramid::full_image_row_int(int level, int y)
   return mcvRow(full_images[level], y + border_size, int) + border_size;
 }
 
-
+//根据yape_pyramid类型初始化参数函数
 void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int number_of_octaves, int inner_border)
 {
   this->outer_border = outer_border;
@@ -282,23 +282,23 @@ void fine_gaussian_pyramid::set_image(const IplImage * image)
 {
   if (width + 2 * inner_border != image->width || height + 2 * inner_border != image->height) {
     free();	//初始化高斯金字塔变量
-    alloc(image->width - 2 * inner_border, image->height - 2 * inner_border, outer_border, number_of_octaves, inner_border);
+    alloc(image->width - 2 * inner_border, image->height - 2 * inner_border, outer_border, number_of_octaves, inner_border);	//初始化函数
   }
 
-  cvCopy(image, original_image);
+  cvCopy(image, original_image);	//复制原始图像
 
-  CvRect dest_roi = cvRect(outer_border, outer_border, image->width, image->height);
-  cvSetImageROI(aztec_pyramid[0], dest_roi);
-  CvRect src_roi = cvRect(0, 0, image->width, image->height);
-  IplROI * image_roi = image->roi;
+  CvRect dest_roi = cvRect(outer_border, outer_border, image->width, image->height);	//初始化一个由outer_border确定尺寸的矩形类
+  cvSetImageROI(aztec_pyramid[0], dest_roi);	//在aztec_pyramid图像中设定roi
+  CvRect src_roi = cvRect(0, 0, image->width, image->height);	//初始化矩形类
+  IplROI * image_roi = image->roi;	//提取image的roi
 
   // An ugly trick to use const on image. I swear the image is actually not modified !!!
-  IplImage * tmp_image = (IplImage *)((int*)image);
-  cvSetImageROI(tmp_image, src_roi);
-  cvCopy(tmp_image, aztec_pyramid[0]);
-  cvFree(&(aztec_pyramid[0]->roi));
-  cvFree(&(tmp_image->roi));
-  tmp_image->roi = image_roi;
+  IplImage * tmp_image = (IplImage *)((int*)image);	//复制image
+  cvSetImageROI(tmp_image, src_roi);	//设置tmp_image图片roi	
+  cvCopy(tmp_image, aztec_pyramid[0]);	//将aztec_pyramid[0]复制到tmp_image
+  cvFree(&(aztec_pyramid[0]->roi));	//释放roi
+  cvFree(&(tmp_image->roi));	//释放roi
+  tmp_image->roi = image_roi;	//将tmp_image的rio设定为image的roi
 
   // Create border
   for(int i = 0; i < outer_border; i++) {
