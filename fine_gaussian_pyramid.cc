@@ -204,7 +204,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
   intermediate_int_image = cvCreateImage(cvSize(total_width, total_height), IPL_DEPTH_32S, 1);	//初始化中间图像
   widthStep_int  = intermediate_int_image->widthStep / sizeof(int);	//初始化步长
 
-  //根据yape_pyramid（？）的类型初始化octave
+  //根据高斯金字塔高斯卷积核尺寸初始化高斯金字塔的每一层
   switch(type) {
   case yape_pyramid_3: {
     float c = 1.F;
@@ -215,12 +215,12 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	add_a_row[n] = (octave_total_height % 2 == 1);
 	n++;
 
-	octave_total_width /= 2;
-	octave_total_height /= 2;
+	octave_total_width /= 2;	
+	octave_total_height /= 2;	//每一层图像长宽减少一倍，面积减少四倍
 	c /= 2;
       }
 
-      if (i % 4 == 1)
+      if (i % 4 == 1)	//一层一个图像
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
       else
 	aztec_pyramid[i] = 0;
@@ -243,7 +243,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	c /= 2;
       }
 
-      if (i % 4 == 3 || i % 4 == 0)
+      if (i % 4 == 3 || i % 4 == 0)	//每一层有两个尺寸相同的图像（？）
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
       else
 	aztec_pyramid[i] = 0;
@@ -267,7 +267,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	  octave_total_height /= 2;
 	  c /= 2;
 	}
-
+	//每层有四个尺寸相同的图像
 	full_images[i]   = cvCreateImage(cvSize(total_width,        total_height),        IPL_DEPTH_8U, 1);
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
 	coeffs[i] = c;
@@ -301,6 +301,7 @@ void fine_gaussian_pyramid::set_image(const IplImage * image)
   tmp_image->roi = image_roi;	//将tmp_image的rio设定为image的roi
 
   // Create border
+  //创建边界（和aztec_pyramid相关）
   for(int i = 0; i < outer_border; i++) {
     unsigned char * border = mcvRow(aztec_pyramid[0], i, unsigned char);
     unsigned char * first_row = mcvRow(image, 0, unsigned char);
@@ -333,7 +334,7 @@ void fine_gaussian_pyramid::set_image(const IplImage * image)
     }
   }
 
-  compute_from_level0();
+  compute_from_level0();	//从level0开始计算
 }
 
 bool fine_gaussian_pyramid::load_image(char * image_name, int i)
@@ -359,7 +360,7 @@ void fine_gaussian_pyramid::compute_from_level0(void)
 {
   // Could save time here yape_pyramid_3, yape_pyramid_3, and yape_pyramid_7
   // cvPyrDown and cvSmooth should be done in one pass. Does it really save time ?? ??????
-
+	//根据所选择的类型对图像进行高斯金字塔下采样
   switch(type) {
   case yape_pyramid_3:
     for(int i = 0; i < number_of_octaves; i++) {
