@@ -1,4 +1,4 @@
-/*
+ï»¿/*
   Copyright 2007 Computer Vision Lab,
   Ecole Polytechnique Federale de Lausanne (EPFL), Switzerland.
   All rights reserved.
@@ -31,7 +31,7 @@ using namespace std;
 #include "fine_gaussian_pyramid.h"
 // #include "linear_filter.h"
 
-//ĞÂ½¨¸ßË¹½ğ×ÖËşº¯Êı
+//æ–°å»ºé«˜æ–¯é‡‘å­—å¡”å‡½æ•°
 fine_gaussian_pyramid::fine_gaussian_pyramid(int type, int outer_border, int number_of_octaves, int inner_border)
 {
   this->type = type;
@@ -94,25 +94,25 @@ fine_gaussian_pyramid::~fine_gaussian_pyramid()
   free();
 }
 
-//¸ßË¹½ğ×ÖËşÏà¹Ø±äÁ¿³õÊ¼»¯º¯Êı
+//é«˜æ–¯é‡‘å­—å¡”ç›¸å…³å˜é‡åˆå§‹åŒ–å‡½æ•°
 void fine_gaussian_pyramid::free(void)
 {
-  if (original_image != 0)	//ÇåÁãÔ­Ê¼Í¼Ïñ
+  if (original_image != 0)	//æ¸…é›¶åŸå§‹å›¾åƒ
     cvReleaseImage(&original_image);
-  //ÇåÁãaztec_pyramid
+  //æ¸…é›¶aztec_pyramid
   if (aztec_pyramid != 0) {
     for(int i = 0; i < 4 * number_of_octaves; i++)
       if (aztec_pyramid[i] != 0)
 	cvReleaseImage(&aztec_pyramid[i]);
     delete [] aztec_pyramid;
   }
-  //ÇåÁãfull_images
+  //æ¸…é›¶full_images
   if (full_images != 0) {
     for(int i = 0; i < 4 * number_of_octaves; i++)
       cvReleaseImage(&full_images[i]);
     delete [] full_images;
   }
-  //³õÊ¼»¯²¿·Ö²ÎÊı
+  //åˆå§‹åŒ–éƒ¨åˆ†å‚æ•°
   delete [] coeffs;
   delete [] add_a_row;
   delete [] add_a_col;
@@ -179,7 +179,7 @@ int * fine_gaussian_pyramid::full_image_row_int(int level, int y)
   return mcvRow(full_images[level], y + border_size, int) + border_size;
 }
 
-//¸ù¾İyape_pyramidÀàĞÍ³õÊ¼»¯²ÎÊıº¯Êı
+//æ ¹æ®yape_pyramidç±»å‹åˆå§‹åŒ–å‚æ•°å‡½æ•°
 void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int number_of_octaves, int inner_border)
 {
   this->outer_border = outer_border;
@@ -192,7 +192,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
   int octave_total_width  = total_width  = width  + 2 * border_size;
   int octave_total_height = total_height = height + 2 * border_size;
 
-  //³õÊ¼»¯²ÎÊı
+  //åˆå§‹åŒ–å‚æ•°
   aztec_pyramid = new IplImage*[number_of_octaves * 4];
   full_images = new IplImage*[number_of_octaves * 4];
   coeffs = new float[number_of_octaves * 4];
@@ -200,11 +200,11 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
   add_a_row = new bool[number_of_octaves * 4];
   add_a_col = new bool[number_of_octaves * 4];
 
-  original_image = cvCreateImage(cvSize(width + 2 * inner_border, height + 2 * inner_border), IPL_DEPTH_8U, 1);	//³õÊ¼»¯Ô­Ê¼Í¼Ïñ
-  intermediate_int_image = cvCreateImage(cvSize(total_width, total_height), IPL_DEPTH_32S, 1);	//³õÊ¼»¯ÖĞ¼äÍ¼Ïñ
-  widthStep_int  = intermediate_int_image->widthStep / sizeof(int);	//³õÊ¼»¯²½³¤
+  original_image = cvCreateImage(cvSize(width + 2 * inner_border, height + 2 * inner_border), IPL_DEPTH_8U, 1);	//åˆå§‹åŒ–åŸå§‹å›¾åƒ
+  intermediate_int_image = cvCreateImage(cvSize(total_width, total_height), IPL_DEPTH_32S, 1);	//åˆå§‹åŒ–ä¸­é—´å›¾åƒ
+  widthStep_int  = intermediate_int_image->widthStep / sizeof(int);	//åˆå§‹åŒ–æ­¥é•¿
 
-  //¸ù¾İ¸ßË¹½ğ×ÖËş¸ßË¹¾í»ıºË³ß´ç³õÊ¼»¯¸ßË¹½ğ×ÖËşµÄÃ¿Ò»²ã
+  //æ ¹æ®é«˜æ–¯é‡‘å­—å¡”é«˜æ–¯å·ç§¯æ ¸å°ºå¯¸åˆå§‹åŒ–é«˜æ–¯é‡‘å­—å¡”çš„æ¯ä¸€å±‚
   switch(type) {
   case yape_pyramid_3: {
     float c = 1.F;
@@ -216,11 +216,11 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	n++;
 
 	octave_total_width /= 2;	
-	octave_total_height /= 2;	//Ã¿Ò»²ãÍ¼Ïñ³¤¿í¼õÉÙÒ»±¶£¬Ãæ»ı¼õÉÙËÄ±¶
+	octave_total_height /= 2;	//æ¯ä¸€å±‚å›¾åƒé•¿å®½å‡å°‘ä¸€å€ï¼Œé¢ç§¯å‡å°‘å››å€
 	c /= 2;
       }
 
-      if (i % 4 == 1)	//Ò»²ãÒ»¸öÍ¼Ïñ
+      if (i % 4 == 1)	//ä¸€å±‚ä¸€ä¸ªå›¾åƒ
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
       else
 	aztec_pyramid[i] = 0;
@@ -243,7 +243,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	c /= 2;
       }
 
-      if (i % 4 == 3 || i % 4 == 0)	//Ã¿Ò»²ãÓĞÁ½¸ö³ß´çÏàÍ¬µÄÍ¼Ïñ£¨£¿£©
+      if (i % 4 == 3 || i % 4 == 0)	//æ¯ä¸€å±‚æœ‰ä¸¤ä¸ªå°ºå¯¸ç›¸åŒçš„å›¾åƒï¼ˆï¼Ÿï¼‰
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
       else
 	aztec_pyramid[i] = 0;
@@ -267,7 +267,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 	  octave_total_height /= 2;
 	  c /= 2;
 	}
-	//Ã¿²ãÓĞËÄ¸ö³ß´çÏàÍ¬µÄÍ¼Ïñ
+	//æ¯å±‚æœ‰å››ä¸ªå°ºå¯¸ç›¸åŒçš„å›¾åƒ
 	full_images[i]   = cvCreateImage(cvSize(total_width,        total_height),        IPL_DEPTH_8U, 1);
 	aztec_pyramid[i] = cvCreateImage(cvSize(octave_total_width, octave_total_height), IPL_DEPTH_8U, 1);
 	coeffs[i] = c;
@@ -281,27 +281,89 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
 void fine_gaussian_pyramid::set_image(const IplImage * image)
 {
   if (width + 2 * inner_border != image->width || height + 2 * inner_border != image->height) {
-    free();	//³õÊ¼»¯¸ßË¹½ğ×ÖËş±äÁ¿
-    alloc(image->width - 2 * inner_border, image->height - 2 * inner_border, outer_border, number_of_octaves, inner_border);	//³õÊ¼»¯º¯Êı
+    free();	//åˆå§‹åŒ–é«˜æ–¯é‡‘å­—å¡”å˜é‡
+    alloc(image->width - 2 * inner_border, image->height - 2 * inner_border, outer_border, number_of_octaves, inner_border);	//åˆå§‹åŒ–å‡½æ•°
   }
 
-  cvCopy(image, original_image);	//¸´ÖÆÔ­Ê¼Í¼Ïñ
+  cvCopy(image, original_image);	//å¤åˆ¶åŸå§‹å›¾åƒ
 
-  CvRect dest_roi = cvRect(outer_border, outer_border, image->width, image->height);	//³õÊ¼»¯Ò»¸öÓÉouter_borderÈ·¶¨³ß´çµÄ¾ØĞÎÀà
-  cvSetImageROI(aztec_pyramid[0], dest_roi);	//ÔÚaztec_pyramidÍ¼ÏñÖĞÉè¶¨roi
-  CvRect src_roi = cvRect(0, 0, image->width, image->height);	//³õÊ¼»¯¾ØĞÎÀà
-  IplROI * image_roi = image->roi;	//ÌáÈ¡imageµÄroi
+  CvRect dest_roi = cvRect(outer_border, outer_border, image->width, image->height);	//åˆå§‹åŒ–ä¸€ä¸ªç”±outer_borderç¡®å®šå°ºå¯¸çš„çŸ©å½¢ç±»
+  cvSetImageROI(aztec_pyramid[0], dest_roi);	//åœ¨aztec_pyramidå›¾åƒä¸­è®¾å®šroi
+  CvRect src_roi = cvRect(0, 0, image->width, image->height);	//åˆå§‹åŒ–çŸ©å½¢ç±»
+  IplROI * image_roi = image->roi;	//æå–imageçš„roi
 
   // An ugly trick to use const on image. I swear the image is actually not modified !!!
-  IplImage * tmp_image = (IplImage *)((int*)image);	//¸´ÖÆimage
-  cvSetImageROI(tmp_image, src_roi);	//ÉèÖÃtmp_imageÍ¼Æ¬roi	
-  cvCopy(tmp_image, aztec_pyramid[0]);	//½«aztec_pyramid[0]¸´ÖÆµ½tmp_image
-  cvFree(&(aztec_pyramid[0]->roi));	//ÊÍ·Åroi
-  cvFree(&(tmp_image->roi));	//ÊÍ·Åroi
-  tmp_image->roi = image_roi;	//½«tmp_imageµÄrioÉè¶¨ÎªimageµÄroi
+  IplImage * tmp_image = (IplImage *)((int*)image);	//å¤åˆ¶image
+  cvSetImageROI(tmp_image, src_roi);	//è®¾ç½®tmp_imageå›¾ç‰‡roi	
+  cvCopy(tmp_image, aztec_pyramid[0]);	//å°†aztec_pyramid[0]å¤åˆ¶åˆ°tmp_image
+  cvFree(&(aztec_pyramid[0]->roi));	//é‡Šæ”¾roi
+  cvFree(&(tmp_image->roi));	//é‡Šæ”¾roi
+  tmp_image->roi = image_roi;	//å°†tmp_imageçš„rioè®¾å®šä¸ºimageçš„roi
 
   // Create border
-  //´´½¨±ß½ç£¨ºÍaztec_pyramidÏà¹Ø£©
+  //åˆ›å»ºè¾¹ç•Œï¼ˆå’Œaztec_pyramidç›¸å…³ï¼‰
+  /*
+
+  Handling borders:
+
+
+
+  outer_border
+
+  >+------------<--------------------------------------------------+
+
+  |                                                                |
+
+  |                                                                |
+
+  |<- - - -border_size - - ->Â¦                                     |
+
+  |                          Â¦                                     |
+
+  |                          Â¦                                     |
+
+  |             inner_border Â¦                                     |
+
+  |            >+-----------<+------------------------+            |
+
+  |             |                                     |            |
+
+  |             |                                     |            |
+
+  |             |<- - - -original_image->width- - - ->|            |
+
+  |             |                                     |            |
+
+  |             |                                     |            |
+
+  |             |                 width               |            |
+
+  |             |            +-------------+          |            |
+
+  |             |            |             |          |            |
+
+  |             |            |             |          |            |
+
+  |             |            |             |          |            |
+
+  Â¦             Â¦            Â¦             Â¦          Â¦            Â¦
+
+  Â¦                                                                Â¦
+
+  Â¦<- total_width - - - - - - - - - - - - - - - - - - - - - - - - >Â¦
+
+
+
+
+
+  full_images[k]->width  = total_width
+
+  aztec_images[k]->width = total_width / (2 ^ octave)   octave >= 0
+
+
+
+*/
+
   for(int i = 0; i < outer_border; i++) {
     unsigned char * border = mcvRow(aztec_pyramid[0], i, unsigned char);
     unsigned char * first_row = mcvRow(image, 0, unsigned char);
@@ -334,7 +396,7 @@ void fine_gaussian_pyramid::set_image(const IplImage * image)
     }
   }
 
-  compute_from_level0();	//´Ólevel0¿ªÊ¼¼ÆËã
+  compute_from_level0();	//ä»level0å¼€å§‹è®¡ç®—
 }
 
 bool fine_gaussian_pyramid::load_image(char * image_name, int i)
@@ -360,7 +422,7 @@ void fine_gaussian_pyramid::compute_from_level0(void)
 {
   // Could save time here yape_pyramid_3, yape_pyramid_3, and yape_pyramid_7
   // cvPyrDown and cvSmooth should be done in one pass. Does it really save time ?? ??????
-	//¸ù¾İËùÑ¡ÔñµÄÀàĞÍ¶ÔÍ¼Ïñ½øĞĞ¸ßË¹½ğ×ÖËşÏÂ²ÉÑù
+	//æ ¹æ®æ‰€é€‰æ‹©çš„ç±»å‹å¯¹å›¾åƒè¿›è¡Œé«˜æ–¯é‡‘å­—å¡”ä¸‹é‡‡æ ·
   switch(type) {
   case yape_pyramid_3:
     for(int i = 0; i < number_of_octaves; i++) {
