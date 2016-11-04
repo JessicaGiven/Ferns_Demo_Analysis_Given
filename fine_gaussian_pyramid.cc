@@ -302,65 +302,36 @@ void fine_gaussian_pyramid::set_image(const IplImage * image)
 
   // Create border
   //创建边界（和aztec_pyramid相关）
-  /*
 
+/*
   Handling borders:
 
-
-
   outer_border
-
   >+------------<--------------------------------------------------+
-
   |                                                                |
-
   |                                                                |
-
-  |<- - - -border_size - - ->¦                                     |
-
-  |                          ¦                                     |
-
-  |                          ¦                                     |
-
-  |             inner_border ¦                                     |
-
+  |<- - - -border_size - - ->?                                    |
+  |                          ?                                    |
+  |                          ?                                    |
+  |             inner_border ?                                    |
   |            >+-----------<+------------------------+            |
-
   |             |                                     |            |
-
   |             |                                     |            |
-
   |             |<- - - -original_image->width- - - ->|            |
-
   |             |                                     |            |
-
   |             |                                     |            |
-
   |             |                 width               |            |
-
   |             |            +-------------+          |            |
-
   |             |            |             |          |            |
-
   |             |            |             |          |            |
-
   |             |            |             |          |            |
-
-  ¦             ¦            ¦             ¦          ¦            ¦
-
-  ¦                                                                ¦
-
-  ¦<- total_width - - - - - - - - - - - - - - - - - - - - - - - - >¦
-
-
-
+  ?            ?           ?            ?         ?           ?
+  ?                                                               ?
+  ?- total_width - - - - - - - - - - - - - - - - - - - - - - - - >?
 
 
   full_images[k]->width  = total_width
-
-  aztec_images[k]->width = total_width / (2 ^ octave)   octave >= 0
-
-
+  aztec_images[k]->width = total_width / (2 ^ octave)   octave >= 0 因为高斯金字塔采样的缘故，图像成2的指数缩小
 
 */
 
@@ -424,7 +395,7 @@ void fine_gaussian_pyramid::compute_from_level0(void)
   // cvPyrDown and cvSmooth should be done in one pass. Does it really save time ?? ??????
 	//根据所选择的类型对图像进行高斯金字塔下采样
   switch(type) {
-  case yape_pyramid_3:
+  case yape_pyramid_3://卷积核宽度为3的情况下，i为4的倍数时，aztec_pyramid[i]才有效，即每层只有一张图片
     for(int i = 0; i < number_of_octaves; i++) {
       cvSmooth(aztec_pyramid[4 * i], aztec_pyramid[4 * i + 1], CV_GAUSSIAN, 3, 3);
       if (i < number_of_octaves - 1) cvPyrDown(aztec_pyramid[4 * i], aztec_pyramid[4 * i + 4]);
