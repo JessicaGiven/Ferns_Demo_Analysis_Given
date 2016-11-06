@@ -54,19 +54,19 @@ pyr_yape06::~pyr_yape06(void)
   release_managed_image(&laplacian);
 }
 
-
+//特征点检测函数
 int pyr_yape06::detect(fine_gaussian_pyramid * pyramid, keypoint * keypoints, int max_number_of_keypoints)
 {
   number_of_points = 0;
   for(int i = 0; i < pyramid->number_of_octaves; i++) {
-    compute_Ds(pyramid->aztec_pyramid[3 + i * 4]);
-    compute_laplacian(pyramid->aztec_pyramid[3 + i * 4]);
-    add_local_extrema(pyramid, pyramid->aztec_pyramid[3 + i * 4], i);
+    compute_Ds(pyramid->aztec_pyramid[3 + i * 4]); //计算图像变时的边界
+    compute_laplacian(pyramid->aztec_pyramid[3 + i * 4]); //对图像进行拉普拉斯变换
+    add_local_extrema(pyramid, pyramid->aztec_pyramid[3 + i * 4], i); //求图像局部最大值点
   }
 
-  sort_keypoints();
+  sort_keypoints(); //对特征点的最小特征值分数进行降序排列
 
-  return copy_keypoints(keypoints, max_number_of_keypoints);
+  return copy_keypoints(keypoints, max_number_of_keypoints); //复制特征点
 }
 
 void pyr_yape06::compute_Ds(IplImage * smoothed_image)
@@ -93,11 +93,11 @@ inline void pyr_yape06::compute_laplacian(IplImage * smoothed_image, IplImage * 
     }
   }
 }
-
+//计算图像的拉普拉斯变换
 void pyr_yape06::compute_laplacian(IplImage * smoothed_image)
 {
-  manage_image(&laplacian, smoothed_image->width, smoothed_image->height, IPL_DEPTH_32S, 1);
-  cvSetZero(laplacian);
+  manage_image(&laplacian, smoothed_image->width, smoothed_image->height, IPL_DEPTH_32S, 1); //新建laplacian图像
+  cvSetZero(laplacian); //将laplacian图像置为0
 
   const int w = smoothed_image->width;
   const int h = smoothed_image->height;
@@ -131,6 +131,7 @@ void pyr_yape06::compute_laplacian(IplImage * smoothed_image)
   }
 }
 
+//求海森矩阵最小特征值函数
 inline int pyr_yape06::hessian_min_eigen_value(IplImage * smoothed_image, const int tr, const int x, const int y)
 {
   unsigned char * image_ptr = mcvRow(smoothed_image, y, unsigned char) + x;
@@ -160,6 +161,7 @@ inline bool pyr_yape06::laplacian_hessian_criteria(IplImage * laplacian,
   return float(det) > k * float(trace * trace);
 }
 
+//求图像局部最大值点函数
 void pyr_yape06::add_local_extrema(fine_gaussian_pyramid * pyramid, IplImage * smoothed_image, int scale)
 {
   const int w = laplacian->width;
@@ -186,7 +188,7 @@ void pyr_yape06::add_local_extrema(fine_gaussian_pyramid * pyramid, IplImage * s
 	   lap_row[x] > lap_row[x - dy + 1] && lap_row[x] > lap_row[x + dy + 1])
 	  )
 	{
-	  const int min_eigen_value = hessian_min_eigen_value(smoothed_image, lap_row[x], x, y);
+	  const int min_eigen_value = hessian_min_eigen_value(smoothed_image, lap_row[x], x, y); //求输入函数的海森矩阵最小特征值
 	  //	  cout << x << "x" << y << " -> " << lap_row[x] << "; " << min_eigen_value << endl;
 	  if (min_eigen_value > min_ev_threshold) {
 	    //if (laplacian_hessian_criteria(laplacian, x, y)) {
@@ -202,17 +204,17 @@ void pyr_yape06::add_local_extrema(fine_gaussian_pyramid * pyramid, IplImage * s
     }
   }
 }
-
+//'<'是升序排列，'>'是降序排列
 static bool cmp_keypoints(const keypoint & k1, const keypoint & k2)
 {
   return k1.score > k2.score;
 }
-
+//特征点排列函数
 void pyr_yape06::sort_keypoints(void)
 {
   sort(all_keypoints, all_keypoints + number_of_points, cmp_keypoints);
 }
-
+//特征点复制函数
 int pyr_yape06::copy_keypoints(keypoint * keypoints, int max_number_of_keypoints)
 {
   int returned_number_of_keypoints = min(max_number_of_keypoints, number_of_points);

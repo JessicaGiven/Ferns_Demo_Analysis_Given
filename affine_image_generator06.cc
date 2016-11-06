@@ -80,7 +80,7 @@ void affine_image_generator06::generate_Id_image(void)
 
 void affine_image_generator06::generate_random_affine_image(void)
 {
-  generate_random_affine_transformation();
+  generate_random_affine_transformation(); //生成随机仿射变换矩阵
   generate_affine_image();
 }
 

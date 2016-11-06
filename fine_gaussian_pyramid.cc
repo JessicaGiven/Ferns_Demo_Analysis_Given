@@ -211,7 +211,7 @@ void fine_gaussian_pyramid::alloc(int width, int height, int outer_border, int n
     int n = 0;
     for(int i = 0; i < number_of_octaves * 4; i++) {
       if (i > 0 && i % 4 == 0) {
-	add_a_col[n] = (octave_total_width % 2 == 1);
+	add_a_col[n] = (octave_total_width % 2 == 1); //如果此层图像的长宽为奇数，则增加一行或一列将长宽变为偶数
 	add_a_row[n] = (octave_total_height % 2 == 1);
 	n++;
 

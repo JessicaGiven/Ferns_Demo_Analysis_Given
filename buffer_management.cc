@@ -58,7 +58,7 @@ void aligned_and_managed_delete(void * aligned_ptr)
     aligned_ptr = 0;
   }
 }
-
+//新建laplacian图像，定义参数
 bool manage_image(IplImage ** image, int width, int height, int depth, int nChannels)
 {
   bool just_created = false;

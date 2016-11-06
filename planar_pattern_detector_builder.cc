@@ -246,19 +246,19 @@ void planar_pattern_detector_builder::detect_most_stable_model_points(planar_pat
 
   image_generator->disable_random_background();	//关闭随机背景
   image_generator->generate_Id_image();	//生成Id图像
-  pyramid->set_image(image_generator->generated_image);
-  if (point_detector == 0) detector->point_detector = new pyr_yape06(); point_detector = detector->point_detector;
-  keypoint * tmp_model_point_array = new keypoint[K * maximum_number_of_points_on_model];
+  pyramid->set_image(image_generator->generated_image); //得到aztec_pyramid和full_image两种图片
+  if (point_detector == 0) detector->point_detector = new pyr_yape06(); point_detector = detector->point_detector; //新建点检测器
+  keypoint * tmp_model_point_array = new keypoint[K * maximum_number_of_points_on_model]; //新建特征点类
 
   for(int i = 0; i < number_of_generated_images; i++) {
     cout << "   (Generating views: " << number_of_generated_images - i << ")     \r" << flush;
     
     if (i == 0) image_generator->generate_Id_image();
-    else        image_generator->generate_random_affine_image();
-    pyramid->set_image(image_generator->generated_image);
+    else        image_generator->generate_random_affine_image(); //产生随机倾斜图片
+    pyramid->set_image(image_generator->generated_image); ////得到aztec_pyramid和full_image两种图片
 
     int current_detected_point_number = detector->point_detector->detect(pyramid, tmp_model_point_array,
-									 K * maximum_number_of_points_on_model);
+									 K * maximum_number_of_points_on_model); //检测特征点
 
     for(int j = 0; j < current_detected_point_number; j++) {
       keypoint * k = tmp_model_point_array + j;
