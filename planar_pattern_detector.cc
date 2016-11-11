@@ -207,11 +207,11 @@ bool planar_pattern_detector::detect(const IplImage * input_image)
 
   return pattern_is_detected;
 }
-
+//关键点图像存储函数
 void planar_pattern_detector::save_image_of_model_points(const char * filename, int patch_size)
 {
-  IplImage * color_model_image = mcvGrayToColor(model_image);
-
+  IplImage * color_model_image = mcvGrayToColor(model_image); //黑白图像转彩色图像
+  //在图像上用圆圈把关键点标记出来
   for(int i = 0; i < number_of_model_points; i++)
     mcvCircle(color_model_image,
 	      int( model_points[i].fr_u() + 0.5 ), int( model_points[i].fr_v() + 0.5 ), patch_size / 2 * (1 << int(model_points[i].scale)),

@@ -194,12 +194,12 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
                                   minimum_number_of_views_rate);	//稳定点检测
 
 
-  detector->save_image_of_model_points("model_points.bmp", patch_size);
+  detector->save_image_of_model_points("model_points.bmp", patch_size); //存储已标记关键点的图片
 
   cout << "> [planar_pattern_detector_builder] Creating classifier: " << flush;
   detector->classifier = new fern_based_point_classifier(maximum_number_of_points_on_model,
 							 number_of_ferns, number_of_tests_per_fern,
-							 -patch_size / 2, patch_size / 2, -patch_size / 2, patch_size / 2, 0, 0);
+							 -patch_size / 2, patch_size / 2, -patch_size / 2, patch_size / 2, 0, 0); //新建随机蕨点分类器
   cout << endl;
   cout << "> [planar_pattern_detector_builder] Ok." << endl;
 
@@ -259,7 +259,7 @@ void planar_pattern_detector_builder::detect_most_stable_model_points(planar_pat
 
     int current_detected_point_number = detector->point_detector->detect(pyramid, tmp_model_point_array,
 									 K * maximum_number_of_points_on_model); //检测特征点
-
+	//对关键点坐标进行转换，使之与原始尺寸适配
     for(int j = 0; j < current_detected_point_number; j++) {
       keypoint * k = tmp_model_point_array + j;
       float nu, nv;
@@ -271,7 +271,7 @@ void planar_pattern_detector_builder::detect_most_stable_model_points(planar_pat
       keypoint kd(nu, nv, k->scale);
       if (kd.fr_u() >= detector->u_corner[0] && kd.fr_u() <= detector->u_corner[1] &&
 	  kd.fr_v() >= detector->v_corner[0] && kd.fr_v() <= detector->v_corner[3])	{
-	pair<keypoint, int> * mp = search_for_existing_model_point(&tmp_model_point_vector, nu, nv, int(k->scale));
+	pair<keypoint, int> * mp = search_for_existing_model_point(&tmp_model_point_vector, nu, nv, int(k->scale));//去除重复的关键点（？）
 
 	if (mp != 0) {
 	  // Move the keypoint coordinates in the center of gravity of all agglomerated keypoints:
