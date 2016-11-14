@@ -25,12 +25,12 @@
 using namespace std;
 
 #include "ferns.h"
-
+//合成随机蕨函数
 // ds_min and ds_max currently ignored. Taking ds_min = ds_max = 0
 ferns::ferns(int number_of_ferns, int number_of_tests_per_fern,
              int dx_min, int dx_max, int dy_min, int dy_max, int ds_min, int ds_max)
 {
-  alloc(number_of_ferns, number_of_tests_per_fern);
+  alloc(number_of_ferns, number_of_tests_per_fern); //随机蕨结构初始化
   pick_random_tests(dx_min, dx_max, dy_min, dy_max, ds_min, ds_max);
 
   width_full_images = height_full_images = -1;
@@ -206,19 +206,20 @@ int * ferns::drop(fine_gaussian_pyramid * pyramid, int x, int y, int level)
 }
 
 // private:
+//随机蕨结构初始化函数
 void ferns::alloc(int number_of_ferns, int number_of_tests_per_fern)
 {
   this->number_of_ferns = number_of_ferns;
   this->number_of_tests_per_fern = number_of_tests_per_fern;
   number_of_leaves_per_fern = 1 << number_of_tests_per_fern;
-  preallocated_leaves_index = new int [number_of_ferns];
+  preallocated_leaves_index = new int [number_of_ferns]; //随机蕨索引
 
-  int nb_tests = number_of_ferns * number_of_tests_per_fern;
+  int nb_tests = number_of_ferns * number_of_tests_per_fern; //随机蕨输出节点数
   DX1 = new int[nb_tests];
   DY1 = new int[nb_tests];
   DS1 = new int[nb_tests];
 
-  DX2 = new int[nb_tests];
+  DX2 = new int[nb_tests]; 
   DY2 = new int[nb_tests];
   DS2 = new int[nb_tests];
 
@@ -227,6 +228,7 @@ void ferns::alloc(int number_of_ferns, int number_of_tests_per_fern)
     D_aztec_pyramid[i] = new int[2 * nb_tests];
 }
 
+//随机初始化随机蕨函数
 void ferns::pick_random_tests(int dx_min, int dx_max, int dy_min, int dy_max, int /*ds_min*/, int /*ds_max*/)
 {
   for(int i = 0; i < number_of_ferns; i++)
@@ -240,7 +242,7 @@ void ferns::pick_random_tests(int dx_min, int dx_max, int dy_min, int dy_max, in
       DS1[k] = DS2[k] = 0;
     }
 
-  compute_max_d();
+  compute_max_d(); //寻找DX，DY中最大的数值
 }
 
 void ferns::precompute_D_array(int * D, IplImage * image)
@@ -253,6 +255,7 @@ void ferns::precompute_D_array(int * D, IplImage * image)
     }
 }
 
+//DX，DY中最大值计算函数
 void ferns::compute_max_d(void)
 {
   max_d = 0;

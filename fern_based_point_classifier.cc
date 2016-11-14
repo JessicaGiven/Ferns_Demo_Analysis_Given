@@ -49,7 +49,7 @@ fern_based_point_classifier::fern_based_point_classifier(ifstream & f)
 
 //随机蕨点分类器初始化函数
 fern_based_point_classifier::fern_based_point_classifier(int number_of_classes, //类别数
-                                                         int number_of_ferns, int number_of_tests_per_fern, //
+                                                         int number_of_ferns, int number_of_tests_per_fern, //随机蕨数量，单个随机蕨的特征数
                                                          int dx_min, int dx_max,
                                                          int dy_min, int dy_max,
                                                          int ds_min, int ds_max)
