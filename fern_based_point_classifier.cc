@@ -57,11 +57,11 @@ fern_based_point_classifier::fern_based_point_classifier(int number_of_classes, 
   this->number_of_classes = number_of_classes;
 
   Ferns = new ferns(number_of_ferns, number_of_tests_per_fern,
-                    dx_min, dx_max, dy_min, dy_max, ds_min, ds_max);
+                    dx_min, dx_max, dy_min, dy_max, ds_min, ds_max); //初始化随机蕨结构
 
   number_of_samples_for_class = new int[number_of_classes];
 
-  int buffer_size = number_of_classes * Ferns->number_of_ferns * Ferns->number_of_leaves_per_fern;
+  int buffer_size = number_of_classes * Ferns->number_of_ferns * Ferns->number_of_leaves_per_fern; 
   leaves_counters = new short[buffer_size];
   leaves_distributions = new float[buffer_size];
   step1 = number_of_classes;
