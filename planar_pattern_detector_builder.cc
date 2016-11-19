@@ -33,7 +33,7 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
 									    int number_of_generated_images_to_find_stable_points,	//生成用于寻找稳定点的点数
 									    double minimum_number_of_views_rate,	//最小视频帧数（？）
 									    int patch_size, int yape_radius, int number_of_octaves, //（？？？）
-									    int number_of_ferns, int number_of_tests_per_fern, //蕨数量，每个蕨的测试数（？）
+									    int number_of_ferns, int number_of_tests_per_fern, //蕨数量，每个蕨中的特征数
 									    int number_of_samples_for_refinement, int number_of_samples_for_test,	//用于简化的样本数，用于测试的样本数
 									    char * given_detector_data_filename,	//检测器文件名
 									    int roi_up_left_u, int roi_up_left_v,	//检测区域坐标

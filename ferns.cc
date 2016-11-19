@@ -211,8 +211,8 @@ void ferns::alloc(int number_of_ferns, int number_of_tests_per_fern)
 {
   this->number_of_ferns = number_of_ferns;
   this->number_of_tests_per_fern = number_of_tests_per_fern;
-  number_of_leaves_per_fern = 1 << number_of_tests_per_fern; //随机蕨层数（？）特征数*2
-  preallocated_leaves_index = new int [number_of_ferns]; //随机蕨索引
+  number_of_leaves_per_fern = 1 << number_of_tests_per_fern; //每个蕨的叶子数 = 每个蕨的特征数/2
+  preallocated_leaves_index = new int [number_of_ferns]; //随机蕨叶子索引
 
   int nb_tests = number_of_ferns * number_of_tests_per_fern; //随机蕨输出节点数
   DX1 = new int[nb_tests];

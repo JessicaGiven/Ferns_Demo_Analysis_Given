@@ -59,17 +59,17 @@ fern_based_point_classifier::fern_based_point_classifier(int number_of_classes, 
   Ferns = new ferns(number_of_ferns, number_of_tests_per_fern,
                     dx_min, dx_max, dy_min, dy_max, ds_min, ds_max); //初始化随机蕨结构
 
-  number_of_samples_for_class = new int[number_of_classes];
+  number_of_samples_for_class = new int[number_of_classes]; //初始化每个类别的数量
 
-  int buffer_size = number_of_classes * Ferns->number_of_ferns * Ferns->number_of_leaves_per_fern; 
-  leaves_counters = new short[buffer_size];
+  int buffer_size = number_of_classes * Ferns->number_of_ferns * Ferns->number_of_leaves_per_fern; //初始化buffer
+  leaves_counters = new short[buffer_size]; 
   leaves_distributions = new float[buffer_size];
   step1 = number_of_classes;
   step2 = step1 * Ferns->number_of_leaves_per_fern;
 
   preallocated_distribution_for_a_keypoint = new float[number_of_classes];
 
-  set_number_of_ferns_to_use(-1);
+  set_number_of_ferns_to_use(-1); //设置使用多少个随机蕨
 }
 
 fern_based_point_classifier::~fern_based_point_classifier()
@@ -167,6 +167,7 @@ bool fern_based_point_classifier::save(ofstream & f)
   return true;
 }
 
+//随机蕨叶子初始化函数
 void fern_based_point_classifier::reset_leaves_distributions(int _prior_number)
 {
   int buffer_size = number_of_classes * Ferns->number_of_ferns * Ferns->number_of_leaves_per_fern;
@@ -445,6 +446,7 @@ int fern_based_point_classifier::recognize_verbose(fine_gaussian_pyramid * pyram
   return class_index;
 }
 
+//随机蕨使用量设置函数
 void fern_based_point_classifier::set_number_of_ferns_to_use(int _number_of_ferns_to_use)
 {
   number_of_ferns_to_use = _number_of_ferns_to_use;
