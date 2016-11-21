@@ -180,21 +180,23 @@ void fern_based_point_classifier::reset_leaves_distributions(int _prior_number)
     number_of_samples_for_class[i] = 0;
 }
 
+//随机蕨训练函数
 void fern_based_point_classifier::train(keypoint * keypoints, int number_of_keypoints,
                                         int number_of_octaves, int yape_radius,
                                         int number_of_generated_images,
 					affine_image_generator06 * image_generator)
 {
-  fine_gaussian_pyramid * pyramid = new fine_gaussian_pyramid(yape_radius, Ferns->max_d, number_of_octaves);
+  fine_gaussian_pyramid * pyramid = new fine_gaussian_pyramid(yape_radius, Ferns->max_d, number_of_octaves); //新建高斯金字塔结构
 
-  image_generator->enable_random_background();
+  image_generator->enable_random_background(); //开启随机背景
 
   cout << endl;
   for(int i = 0; i < number_of_generated_images; i++) {
     cout << "  (Generating views " << number_of_generated_images - i << ")              \r" << flush;
-    image_generator->generate_random_affine_image();
-    pyramid->set_image(image_generator->generated_image);
+    image_generator->generate_random_affine_image(); //产生仿射变换图片
+    pyramid->set_image(image_generator->generated_image); //初始化高斯金字塔原始图像边界
 
+	//对关键点坐标进行仿射变换
     for(int j = 0; j < number_of_keypoints; j++) {
       keypoint * K = keypoints + j;
       float fr_gu, fr_gv;
@@ -204,11 +206,11 @@ void fern_based_point_classifier::train(keypoint * keypoints, int number_of_keyp
       int gv = int( fine_gaussian_pyramid::convCoordf(fr_gv, 0, int(K->scale)) + 0.5 );
       int level = 4 * int(K->scale) + ((yape_radius == 3) ? 1 : (yape_radius == 5) ? 2 : 3);
 
-      int * leaves_index = Ferns->drop(pyramid, gu, gv, level);
+      int * leaves_index = Ferns->drop(pyramid, gu, gv, level); //获得叶索引
       if (leaves_index != 0) {
         number_of_samples_for_class[K->class_index]++;
         for(int k = 0; k < Ferns->number_of_ferns; k++)
-          leaves_counters[k * step2 + leaves_index[k] * step1 + K->class_index]++;
+          leaves_counters[k * step2 + leaves_index[k] * step1 + K->class_index]++; //更新随机蕨叶
       }
     }
   }
@@ -216,9 +218,10 @@ void fern_based_point_classifier::train(keypoint * keypoints, int number_of_keyp
   //delete pyramid;
 }
 
+//随机蕨训练函数
 void fern_based_point_classifier::finalize_training(void)
 {
-
+//使用openmp函数进行了并行加速
 #pragma omp parallel for
   for(int i = 0; i < Ferns->number_of_ferns; i++) {
 	  double * number_of_samples_for_this_leaf = new double[Ferns->number_of_leaves_per_fern];

@@ -120,6 +120,7 @@ bool ferns::save(ofstream & f)
   return true;
 }
 
+//图像与随机蕨关联函数，返回叶索引
 bool ferns::drop(fine_gaussian_pyramid * pyramid, int x, int y, int level, int * leaves_index)
 {
   if (pyramid->type == fine_gaussian_pyramid::full_pyramid_357)
@@ -128,6 +129,7 @@ bool ferns::drop(fine_gaussian_pyramid * pyramid, int x, int y, int level, int *
     return drop_aztec_pyramid(pyramid, x, y, level, leaves_index);
 }
 
+//单层图片与随机蕨关联函数
 bool ferns::drop_full_images(fine_gaussian_pyramid * pyramid, int x, int y, int level, int * leaves_index)
 {
   if (pyramid->full_images[level]->width  != width_full_images ||
@@ -162,6 +164,7 @@ bool ferns::drop_full_images(fine_gaussian_pyramid * pyramid, int x, int y, int 
   return true;
 }
 
+//多层金字塔图片与随机蕨关联函数
 bool ferns::drop_aztec_pyramid(fine_gaussian_pyramid * pyramid, int x, int y, int level, int * leaves_index)
 {
   int octave = level / 4; // 4 -> should not be hardcoded -> should be static const in fine_gaussian_pyramid !!!
@@ -197,6 +200,7 @@ bool ferns::drop_aztec_pyramid(fine_gaussian_pyramid * pyramid, int x, int y, in
   return true;
 }
 
+//随机蕨与图像关联函数，返回叶索引
 int * ferns::drop(fine_gaussian_pyramid * pyramid, int x, int y, int level)
 {
   if (drop(pyramid, x, y, level, preallocated_leaves_index))
@@ -249,7 +253,7 @@ void ferns::precompute_D_array(int * D, IplImage * image)
 {
   for(int i = 0; i < number_of_ferns; i++)
     for(int j = 0; j < number_of_tests_per_fern; j++) {
-      int k = i * number_of_tests_per_fern + j;
+      int k = i * number_of_tests_per_fern + j; 
       D[2 * k]     = DX1[k] + image->widthStep * DY1[k];
       D[2 * k + 1] = DX2[k] + image->widthStep * DY2[k];
     }

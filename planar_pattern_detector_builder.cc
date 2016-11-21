@@ -204,14 +204,14 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
   cout << "> [planar_pattern_detector_builder] Ok." << endl;
 
   cout << "> [planar_pattern_detector_builder] Training: " << endl;
-  detector->classifier->reset_leaves_distributions();
+  detector->classifier->reset_leaves_distributions(); //初始化叶分布
   cout << "   - leaves distributions reset ok. " << flush;
   detector->classifier->train(detector->model_points, detector->number_of_model_points,
 			      number_of_octaves, yape_radius, number_of_samples_for_refinement,
-			      detector->image_generator);
+			      detector->image_generator); //对随机蕨进行训练
 
   cout << "   - training... " << number_of_samples_for_refinement << " images generated." << endl;
-  detector->classifier->finalize_training();
+  detector->classifier->finalize_training(); 
   cout << "   - posterior probabilities computed." << endl;
 
   cout << "   - testing:" << endl;
