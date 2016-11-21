@@ -211,7 +211,7 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
 			      detector->image_generator); //对随机蕨进行训练
 
   cout << "   - training... " << number_of_samples_for_refinement << " images generated." << endl;
-  detector->classifier->finalize_training(); 
+  detector->classifier->finalize_training(); //计算每个类别的后验概率
   cout << "   - posterior probabilities computed." << endl;
 
   cout << "   - testing:" << endl;
