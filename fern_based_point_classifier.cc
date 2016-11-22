@@ -298,16 +298,18 @@ float fern_based_point_classifier::test(keypoint * keypoints, int number_of_keyp
       int gv = int( fine_gaussian_pyramid::convCoordf(fr_gv, 0, int(K->scale)) + 0.5 );
       int level = 4 * int(K->scale) + ((yape_radius == 3) ? 1 : (yape_radius == 5) ? 2 : 3); //确定金字塔层数
 
+	  //计算分类类别
       int guessed_class_index =
 	(verbose) ? recognize_verbose(pyramid, gu, gv, level) : recognize(pyramid, gu, gv, level);
 
+	  //显示分类类别
       if (verbose)
 	cout << "Guess: " << guessed_class_index << ", True: " << K->class_index << endl;
 
       if (guessed_class_index >= 0) {
-	seen[K->class_index]++;
+	seen[K->class_index]++; //记录识别成功
 	if (guessed_class_index == K->class_index)
-	  recognized[K->class_index]++;
+	  recognized[K->class_index]++; //记录识别正确
       }
     }
   }
@@ -395,6 +397,7 @@ void fern_based_point_classifier::recognize(fine_gaussian_pyramid * pyramid, key
     }
 }
 
+//计算分类类别（不显示分类分数）
 int fern_based_point_classifier::recognize(fine_gaussian_pyramid * pyramid, int u, int v, int level)
 {
   int * leaves_index = Ferns->drop(pyramid, u, v, level);
@@ -424,6 +427,7 @@ int fern_based_point_classifier::recognize(fine_gaussian_pyramid * pyramid, int 
   return class_index;
 }
 
+//计算分类类别
 int fern_based_point_classifier::recognize_verbose(fine_gaussian_pyramid * pyramid, int u, int v, int level)
 {
   int * leaves_index = Ferns->drop(pyramid, u, v, level); //获得叶索引

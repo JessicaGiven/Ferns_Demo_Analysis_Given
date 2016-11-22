@@ -132,7 +132,7 @@ planar_pattern_detector * planar_pattern_detector_builder::learn(const char * im
 								 int maximum_number_of_points_on_model,	//模型中的最大点数
 								 int number_of_generated_images_to_find_stable_points,	//生成寻找稳定点的图像数
 								 double minimum_number_of_views_rate,	//最小帧率
-								 int patch_size, int yape_radius, int number_of_octaves,	//（？？？）
+								 int patch_size, int yape_radius, int number_of_octaves,	//图像块大小， 高斯金字塔类型， 高斯金字塔层数
 								 int number_of_ferns, int number_of_tests_per_fern,	//蕨数量；每个蕨的测试数
 								 int number_of_samples_for_refinement, int number_of_samples_for_test,	//细化样本数；测试样本数
 								 int roi_up_left_u, int roi_up_left_v,	//感兴趣区域左上横坐标；感兴趣区域左上纵坐标
