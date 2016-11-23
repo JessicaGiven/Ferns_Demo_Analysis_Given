@@ -168,19 +168,20 @@ void planar_pattern_detector::set_maximum_number_of_points_to_detect(int max)
   maximum_number_of_points_to_detect = max;
 }
 
+//当前帧检测函数
 bool planar_pattern_detector::detect(const IplImage * input_image)
-{
+{ //检测输入图像是否为灰度图像
   if (input_image->nChannels != 1 || input_image->depth != IPL_DEPTH_8U) {
     cerr << ">! [planar_pattern_detector::detect] Wrong image format" << endl;
     cerr << ">! nChannels = " << input_image->nChannels
 	 << ", depth = " << input_image->depth << "." << endl;
 
     return false;
-  }
+  } 
 
-  pyramid->set_image(input_image);
-  detect_points(pyramid);
-  match_points();
+  pyramid->set_image(input_image); //设定高斯金字塔边界
+  detect_points(pyramid); //对所有高斯金字塔生成图像进行关键点检测
+  match_points(); //对特征点进行分类并计算分类分数
 
   pattern_is_detected = estimate_H();
 
@@ -221,14 +222,16 @@ void planar_pattern_detector::save_image_of_model_points(const char * filename, 
   cvReleaseImage(&color_model_image);
 }
 
+//图像关键点检测函数
 void planar_pattern_detector::detect_points(fine_gaussian_pyramid * pyramid)
 {
-  manage_buffer(detected_points, maximum_number_of_points_to_detect, keypoint);
+  manage_buffer(detected_points, maximum_number_of_points_to_detect, keypoint); //初始化关键点存储区
   //   point_detector->set_laplacian_threshold(10);
   //   point_detector->set_min_eigenvalue_threshold(10);
-  number_of_detected_points = point_detector->detect(pyramid, detected_points, maximum_number_of_points_to_detect);
+  number_of_detected_points = point_detector->detect(pyramid, detected_points, maximum_number_of_points_to_detect); //检测图像关键点
 }
 
+//特征点分类函数
 void planar_pattern_detector::match_points(void)
 {
   for(int i = 0; i < number_of_model_points; i++) {

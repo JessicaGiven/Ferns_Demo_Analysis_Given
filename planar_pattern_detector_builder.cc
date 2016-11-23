@@ -69,7 +69,7 @@ planar_pattern_detector * planar_pattern_detector_builder::build_with_cache(cons
 		     roi_up_left_u, roi_up_left_v,
 		     roi_bottom_right_u, roi_bottom_right_v);
 
-    if (detector != 0) detector->save(detector_data_filename);	
+    if (detector != 0) detector->save(detector_data_filename);	//´æ´¢¼ì²âÆ÷Êı¾İ
   }
 
   return detector;
