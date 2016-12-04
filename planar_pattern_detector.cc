@@ -183,7 +183,7 @@ bool planar_pattern_detector::detect(const IplImage * input_image)
   detect_points(pyramid); //对所有高斯金字塔生成图像进行关键点检测
   match_points(); //对特征点进行分类并计算分类分数
 
-  pattern_is_detected = estimate_H();
+  pattern_is_detected = estimate_H(); //生成单应矩阵
 
   if (pattern_is_detected) {
     for(int i = 0; i < 4; i++)
@@ -198,9 +198,9 @@ bool planar_pattern_detector::detect(const IplImage * input_image)
 	  (Hu - model_points[i].potential_correspondent->fr_u()) *
 	  (Hu - model_points[i].potential_correspondent->fr_u()) +
 	  (Hv - model_points[i].potential_correspondent->fr_v()) *
-	  (Hv - model_points[i].potential_correspondent->fr_v());
+	  (Hv - model_points[i].potential_correspondent->fr_v()); //计算估计点与原始关键点的欧式距离
 	if (dist2 > 10.0 * 10.0)
-	  model_points[i].class_score = 0.0;
+	  model_points[i].class_score = 0.0; //以10*10作为阈值判断是否检测检测到特征点
 	else
 	  number_of_matches++;
       }
@@ -265,7 +265,7 @@ bool planar_pattern_detector::estimate_H(void)
 				      model_points[i].potential_correspondent->fr_u(), model_points[i].potential_correspondent->fr_v(),
                                       model_points[i].class_score);
 
-  return H_estimator->ransac(&H, 10., 1500, 0.99, true) > 10;
+  return H_estimator->ransac(&H, 10., 1500, 0.99, true) > 10; //随机抽样一致性
 }
 
 //! test()

@@ -232,8 +232,8 @@ void detect_and_draw(IplImage * frame)
 			if (mode == 3 && tracker->track(frame)) {
 				//绘制特征点位置
 				if (show_keypoints) {
-					draw_detected_keypoints(frame, detector);
-					draw_recognized_keypoints(frame, detector);
+					draw_detected_keypoints(frame, detector); //绘制随机蕨分类器检测到的当前帧关键点
+					draw_recognized_keypoints(frame, detector); //绘制经过比对的当前帧关键点
 				}
 				draw_tracked_position(frame, tracker);	//绘制追踪位置
 				if (show_tracked_locations) draw_tracked_locations(frame, tracker);	//绘制追踪位置(变换）
@@ -241,7 +241,7 @@ void detect_and_draw(IplImage * frame)
 				cvPutText(frame, "detection+template-based 3D tracking", cvPoint(10, 30), &font, cvScalar(255, 255, 255));	//在视频上叠加detection+template-based 3D tracking
 			} else {//绘制特征点位置
 				if (show_keypoints) {
-					draw_detected_keypoints(frame, detector);	
+					draw_detected_keypoints(frame, detector);	 
 					draw_recognized_keypoints(frame, detector);
 				}
 				draw_detected_position(frame, detector);	//绘制检测位置
