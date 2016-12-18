@@ -23,6 +23,8 @@
 #include <iostream>
 using namespace std;
 
+#define ZLIB_WINAPI
+
 #include <zlib.h>
 #include "mcv.h"
 #include "fern_based_point_classifier.h"

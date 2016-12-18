@@ -138,7 +138,7 @@ bool template_matching_based_tracker::normalize(CvMat * V)
   float inv_sigma = 1.0 / sqrt(sum2 / V->rows - mean * mean);	//计算方差的倒数（？）
 
   // Not enough contrast,  better not put this sample into the training set:
-  if (!finite(inv_sigma))	//判断方差倒数是否为无穷，如果是无穷，则不加入训练集
+  if (!_finite(inv_sigma))	//判断方差倒数是否为无穷，如果是无穷，则不加入训练集
     return false;
 
   for(int i = 0; i < V->rows; i++)	

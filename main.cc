@@ -386,7 +386,7 @@ int main(int argc, char ** argv)
       frame = cvRetrieveFrame(capture);	//抓取一帧图像
     }
     else {
-      snprintf(seq_buffer, max_filename, sequence_format.c_str(), frame_id);	//snprintf函数windows的标准输入输出库中没有，为Linux专用，从图像序列中读取一帧到缓冲区
+      _snprintf(seq_buffer, max_filename, sequence_format.c_str(), frame_id);	//snprintf函数windows的标准输入输出库中没有，为Linux专用，从图像序列中读取一帧到缓冲区
       frame = cvLoadImage(seq_buffer, 1);	//从缓冲区加载图像
       ++frame_id;
     }

@@ -1,4 +1,4 @@
-/*
+﻿/*
   Copyright 2007 Computer Vision Lab,
   Ecole Polytechnique Federale de Lausanne (EPFL), Switzerland.
   All rights reserved.
@@ -22,6 +22,8 @@
 */
 #ifndef buffer_management_h
 #define buffer_management_h
+
+#define ZLIB_WINAPI
 
 // #include <emmintrin.h>
 #include <zlib.h>

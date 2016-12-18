@@ -23,6 +23,8 @@
 #ifndef fern_based_point_classifier_h
 #define fern_based_point_classifier_h
 
+#define ZLIB_WINAPI
+
 #include <fstream>
 using namespace std;
 
