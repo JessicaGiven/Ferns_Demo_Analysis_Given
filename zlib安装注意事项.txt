@@ -1,0 +1,12 @@
+1.源码地址：http://www.zlib.net/
+
+2.参考http://blog.csdn.net/x_iya/article/details/11826647
+
+zlib-1.2.8\contrib\vstudio\vc10\zlibvc.sln 目录改为 zlib-1.2.8\contrib\vstudio\vc11\zlibvc.sln
+
+namke步骤不用做
+
+出现version错误，进入错误文件将version 1.28 改为1.2
+
+3.生成的库文件位于zlib-1.2.8\contrib\vstudio\vc11\x86\ZlibDllRelease
+进入Ferns工程指定头文件以及库路径，将zlibwapi.dll文件拷贝到工程的Debug或者Release文件夹
