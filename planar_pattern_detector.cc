@@ -187,7 +187,7 @@ bool planar_pattern_detector::detect(const IplImage * input_image)
 
   if (pattern_is_detected) {
     for(int i = 0; i < 4; i++)
-      H.transform_point(u_corner[i], v_corner[i], detected_u_corner[i], detected_v_corner[i]); //转换检测roi的坐标系
+      H.transform_point(u_corner[i], v_corner[i], detected_u_corner[i], detected_v_corner[i]); //转换检测roi的坐标系,保持原来的矩形不变
 
     number_of_matches = 0;
     for(int i = 0; i < number_of_model_points; i++)
